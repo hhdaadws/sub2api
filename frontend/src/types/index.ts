@@ -387,6 +387,8 @@ export interface AdminGroup extends Group {
   cache_read_transfer_ratio: number
   cache_read_transfer_probability: number
 }
+
+export interface ApiKey {
   id: number
   user_id: number
   key: string
