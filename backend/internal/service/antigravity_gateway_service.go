@@ -2136,6 +2136,12 @@ func (s *AntigravityGatewayService) ForwardGemini(ctx context.Context, c *gin.Co
 			})
 			return nil, &UpstreamFailoverError{StatusCode: resp.StatusCode, ResponseBody: unwrappedForOps}
 		}
+		// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
+		if ContainsYesCaseInsensitive(unwrappedForOps) {
+			log.Printf("[ErrorOverride] Antigravity upstream error %d overridden to 400 invalid_request (body contains 'yes'), account=%d", resp.StatusCode, account.ID)
+			s.writeClaudeError(c, http.StatusBadRequest, "invalid_request_error", "invalid request")
+			return nil, fmt.Errorf("antigravity upstream error: %d (overridden: body contains yes)", resp.StatusCode)
+		}
 		if contentType == "" {
 			contentType = "application/json"
 		}

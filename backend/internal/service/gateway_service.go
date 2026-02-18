@@ -4539,6 +4539,13 @@ func ApplyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
 	if transferAmount <= 0 {
 		return false
 	}
+
+	// 如果原始 cache_creation 没有 5m/1h 明细（上游未返回 ephemeral 字段），
+	// 先将已有的 CacheCreationInputTokens 归入 1h，避免转移后产生未分类的 token 导致漏计费。
+	if usage.CacheCreation5mTokens == 0 && usage.CacheCreation1hTokens == 0 && usage.CacheCreationInputTokens > 0 {
+		usage.CacheCreation1hTokens = usage.CacheCreationInputTokens
+	}
+
 	usage.CacheReadInputTokens -= transferAmount
 	usage.CacheCreationInputTokens += transferAmount
 	usage.CacheCreation1hTokens += transferAmount
@@ -4569,6 +4576,14 @@ func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
 		usageObj["cache_creation"] = cc
 	}
 	cc1h, _ := cc["ephemeral_1h_input_tokens"].(float64)
+	// 如果原始 cache_creation 没有 1h 明细（上游未返回 ephemeral 字段），
+	// 先将已有的 cache_creation_input_tokens 归入 1h，避免未分类 token 漏计费。
+	if cc1h == 0 && cacheCreation > 0 {
+		cc5m, _ := cc["ephemeral_5m_input_tokens"].(float64)
+		if cc5m == 0 {
+			cc1h = cacheCreation
+		}
+	}
 	cc["ephemeral_1h_input_tokens"] = cc1h + transferAmount
 	return true
 }
