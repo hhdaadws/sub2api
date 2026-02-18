@@ -4529,7 +4529,7 @@ func (s *GatewayService) parseSSEUsage(data string, usage *ClaudeUsage) {
 	}
 }
 
-// ApplyCacheReadTransfer 将 cache_read_input_tokens 的指定比例转移到 cache_creation_input_tokens。
+// ApplyCacheReadTransfer 将 cache_read_input_tokens 的指定比例转移到 1h 缓存创建 token。
 // ratio 取值 0~1。修改 usage 结构体并返回 true 表示发生了变更。
 func ApplyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
 	if ratio <= 0 || ratio > 1 || usage.CacheReadInputTokens <= 0 {
@@ -4541,10 +4541,11 @@ func ApplyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
 	}
 	usage.CacheReadInputTokens -= transferAmount
 	usage.CacheCreationInputTokens += transferAmount
+	usage.CacheCreation1hTokens += transferAmount
 	return true
 }
 
-// rewriteCacheReadTransferJSON 在 JSON usage 对象中应用缓存读取转移。
+// rewriteCacheReadTransferJSON 在 JSON usage 对象中应用缓存读取转移（转移到 1h 缓存创建）。
 func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
 	if ratio <= 0 || ratio > 1 {
 		return false
@@ -4560,6 +4561,15 @@ func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
 	usageObj["cache_read_input_tokens"] = cacheRead - transferAmount
 	cacheCreation, _ := usageObj["cache_creation_input_tokens"].(float64)
 	usageObj["cache_creation_input_tokens"] = cacheCreation + transferAmount
+
+	// 同步更新嵌套的 cache_creation.ephemeral_1h_input_tokens
+	cc, _ := usageObj["cache_creation"].(map[string]any)
+	if cc == nil {
+		cc = map[string]any{}
+		usageObj["cache_creation"] = cc
+	}
+	cc1h, _ := cc["ephemeral_1h_input_tokens"].(float64)
+	cc["ephemeral_1h_input_tokens"] = cc1h + transferAmount
 	return true
 }
 
@@ -4670,7 +4680,7 @@ func (s *GatewayService) handleNonStreamingResponse(ctx context.Context, resp *h
 		}
 	}
 
-	// Cache Read Transfer: 重写 non-streaming 响应中的 cache_read → cache_creation
+	// Cache Read Transfer: 重写 non-streaming 响应中的 cache_read → cache_creation (1h)
 	if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
 		ratio, _ := transferRatio.(float64)
 		if ApplyCacheReadTransfer(&response.Usage, ratio) {
@@ -4678,6 +4688,9 @@ func (s *GatewayService) handleNonStreamingResponse(ctx context.Context, resp *h
 				body = newBody
 			}
 			if newBody, err := sjson.SetBytes(body, "usage.cache_creation_input_tokens", response.Usage.CacheCreationInputTokens); err == nil {
+				body = newBody
+			}
+			if newBody, err := sjson.SetBytes(body, "usage.cache_creation.ephemeral_1h_input_tokens", response.Usage.CacheCreation1hTokens); err == nil {
 				body = newBody
 			}
 		}
