@@ -4440,12 +4440,6 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 						}
 						s.parseSSEUsage(data, usage)
 					}
-
-					// Cache Read Transfer: 应用到内部 usage 结构（确保计费数据一致）
-					if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
-						ratio, _ := transferRatio.(float64)
-						applyCacheReadTransfer(usage, ratio)
-					}
 				}
 				continue
 			}
@@ -4533,9 +4527,9 @@ func (s *GatewayService) parseSSEUsage(data string, usage *ClaudeUsage) {
 	}
 }
 
-// applyCacheReadTransfer 将 cache_read_input_tokens 的指定比例转移到 cache_creation_input_tokens。
+// ApplyCacheReadTransfer 将 cache_read_input_tokens 的指定比例转移到 cache_creation_input_tokens。
 // ratio 取值 0~1。修改 usage 结构体并返回 true 表示发生了变更。
-func applyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
+func ApplyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
 	if ratio <= 0 || ratio > 1 || usage.CacheReadInputTokens <= 0 {
 		return false
 	}
@@ -4677,7 +4671,7 @@ func (s *GatewayService) handleNonStreamingResponse(ctx context.Context, resp *h
 	// Cache Read Transfer: 重写 non-streaming 响应中的 cache_read → cache_creation
 	if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
 		ratio, _ := transferRatio.(float64)
-		if applyCacheReadTransfer(&response.Usage, ratio) {
+		if ApplyCacheReadTransfer(&response.Usage, ratio) {
 			if newBody, err := sjson.SetBytes(body, "usage.cache_read_input_tokens", response.Usage.CacheReadInputTokens); err == nil {
 				body = newBody
 			}

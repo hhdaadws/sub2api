@@ -412,6 +412,12 @@ func (h *GatewayHandler) Messages(c *gin.Context) {
 			userAgent := c.GetHeader("User-Agent")
 			clientIP := ip.GetClientIP(c)
 
+			// Cache Read Transfer: 在计费前一次性转移（从 gin context 读取概率判定结果）
+			if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
+				ratio, _ := transferRatio.(float64)
+				service.ApplyCacheReadTransfer(&result.Usage, ratio)
+			}
+
 			// 异步记录使用量（subscription已在函数开头获取）
 			go func(result *service.ForwardResult, usedAccount *service.Account, ua, clientIP string, fcb bool) {
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -649,6 +655,12 @@ func (h *GatewayHandler) Messages(c *gin.Context) {
 			// 捕获请求信息（用于异步记录，避免在 goroutine 中访问 gin.Context）
 			userAgent := c.GetHeader("User-Agent")
 			clientIP := ip.GetClientIP(c)
+
+			// Cache Read Transfer: 在计费前一次性转移（从 gin context 读取概率判定结果）
+			if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
+				ratio, _ := transferRatio.(float64)
+				service.ApplyCacheReadTransfer(&result.Usage, ratio)
+			}
 
 			// 异步记录使用量（subscription已在函数开头获取）
 			go func(result *service.ForwardResult, usedAccount *service.Account, ua, clientIP string, fcb bool) {
