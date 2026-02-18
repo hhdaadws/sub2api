@@ -30,6 +30,10 @@ type User struct {
 	TotpEnabled         bool       // 是否启用 TOTP
 	TotpEnabledAt       *time.Time // TOTP 启用时间
 
+	// 缓存读取转移（用户级别覆盖，0 表示未设置，回退到分组配置）
+	CacheReadTransferRatio       float64
+	CacheReadTransferProbability float64
+
 	APIKeys       []APIKey
 	Subscriptions []UserSubscription
 }

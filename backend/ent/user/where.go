@@ -125,6 +125,16 @@ func TotpEnabledAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldTotpEnabledAt, v))
 }
 
+// CacheReadTransferRatio applies equality check predicate on the "cache_read_transfer_ratio" field. It's identical to CacheReadTransferRatioEQ.
+func CacheReadTransferRatio(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferProbability applies equality check predicate on the "cache_read_transfer_probability" field. It's identical to CacheReadTransferProbabilityEQ.
+func CacheReadTransferProbability(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCacheReadTransferProbability, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -858,6 +868,86 @@ func TotpEnabledAtIsNil() predicate.User {
 // TotpEnabledAtNotNil applies the NotNil predicate on the "totp_enabled_at" field.
 func TotpEnabledAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldTotpEnabledAt))
+}
+
+// CacheReadTransferRatioEQ applies the EQ predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferRatioNEQ applies the NEQ predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioNEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferRatioIn applies the In predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCacheReadTransferRatio, vs...))
+}
+
+// CacheReadTransferRatioNotIn applies the NotIn predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioNotIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCacheReadTransferRatio, vs...))
+}
+
+// CacheReadTransferRatioGT applies the GT predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioGT(v float64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferRatioGTE applies the GTE predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioGTE(v float64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferRatioLT applies the LT predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioLT(v float64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferRatioLTE applies the LTE predicate on the "cache_read_transfer_ratio" field.
+func CacheReadTransferRatioLTE(v float64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCacheReadTransferRatio, v))
+}
+
+// CacheReadTransferProbabilityEQ applies the EQ predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCacheReadTransferProbability, v))
+}
+
+// CacheReadTransferProbabilityNEQ applies the NEQ predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityNEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCacheReadTransferProbability, v))
+}
+
+// CacheReadTransferProbabilityIn applies the In predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCacheReadTransferProbability, vs...))
+}
+
+// CacheReadTransferProbabilityNotIn applies the NotIn predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityNotIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCacheReadTransferProbability, vs...))
+}
+
+// CacheReadTransferProbabilityGT applies the GT predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityGT(v float64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCacheReadTransferProbability, v))
+}
+
+// CacheReadTransferProbabilityGTE applies the GTE predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityGTE(v float64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCacheReadTransferProbability, v))
+}
+
+// CacheReadTransferProbabilityLT applies the LT predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityLT(v float64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCacheReadTransferProbability, v))
+}
+
+// CacheReadTransferProbabilityLTE applies the LTE predicate on the "cache_read_transfer_probability" field.
+func CacheReadTransferProbabilityLTE(v float64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCacheReadTransferProbability, v))
 }
 
 // HasAPIKeys applies the HasEdge predicate on the "api_keys" edge.

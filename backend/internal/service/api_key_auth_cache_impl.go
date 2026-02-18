@@ -217,11 +217,13 @@ func (s *APIKeyService) snapshotFromAPIKey(apiKey *APIKey) *APIKeyAuthSnapshot {
 		QuotaUsed:   apiKey.QuotaUsed,
 		ExpiresAt:   apiKey.ExpiresAt,
 		User: APIKeyAuthUserSnapshot{
-			ID:          apiKey.User.ID,
-			Status:      apiKey.User.Status,
-			Role:        apiKey.User.Role,
-			Balance:     apiKey.User.Balance,
-			Concurrency: apiKey.User.Concurrency,
+			ID:                           apiKey.User.ID,
+			Status:                       apiKey.User.Status,
+			Role:                         apiKey.User.Role,
+			Balance:                      apiKey.User.Balance,
+			Concurrency:                  apiKey.User.Concurrency,
+			CacheReadTransferRatio:       apiKey.User.CacheReadTransferRatio,
+			CacheReadTransferProbability: apiKey.User.CacheReadTransferProbability,
 		},
 	}
 	if apiKey.Group != nil {
@@ -268,11 +270,13 @@ func (s *APIKeyService) snapshotToAPIKey(key string, snapshot *APIKeyAuthSnapsho
 		QuotaUsed:   snapshot.QuotaUsed,
 		ExpiresAt:   snapshot.ExpiresAt,
 		User: &User{
-			ID:          snapshot.User.ID,
-			Status:      snapshot.User.Status,
-			Role:        snapshot.User.Role,
-			Balance:     snapshot.User.Balance,
-			Concurrency: snapshot.User.Concurrency,
+			ID:                           snapshot.User.ID,
+			Status:                       snapshot.User.Status,
+			Role:                         snapshot.User.Role,
+			Balance:                      snapshot.User.Balance,
+			Concurrency:                  snapshot.User.Concurrency,
+			CacheReadTransferRatio:       snapshot.User.CacheReadTransferRatio,
+			CacheReadTransferProbability: snapshot.User.CacheReadTransferProbability,
 		},
 	}
 	if snapshot.Group != nil {

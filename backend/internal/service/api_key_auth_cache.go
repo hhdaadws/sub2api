@@ -23,11 +23,13 @@ type APIKeyAuthSnapshot struct {
 
 // APIKeyAuthUserSnapshot 用户快照
 type APIKeyAuthUserSnapshot struct {
-	ID          int64   `json:"id"`
-	Status      string  `json:"status"`
-	Role        string  `json:"role"`
-	Balance     float64 `json:"balance"`
-	Concurrency int     `json:"concurrency"`
+	ID                           int64   `json:"id"`
+	Status                       string  `json:"status"`
+	Role                         string  `json:"role"`
+	Balance                      float64 `json:"balance"`
+	Concurrency                  int     `json:"concurrency"`
+	CacheReadTransferRatio       float64 `json:"cache_read_transfer_ratio,omitempty"`
+	CacheReadTransferProbability float64 `json:"cache_read_transfer_probability,omitempty"`
 }
 
 // APIKeyAuthGroupSnapshot 分组快照

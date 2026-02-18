@@ -242,6 +242,48 @@ func (_u *UserUpdate) ClearTotpEnabledAt() *UserUpdate {
 	return _u
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (_u *UserUpdate) SetCacheReadTransferRatio(v float64) *UserUpdate {
+	_u.mutation.ResetCacheReadTransferRatio()
+	_u.mutation.SetCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferRatio sets the "cache_read_transfer_ratio" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableCacheReadTransferRatio(v *float64) *UserUpdate {
+	if v != nil {
+		_u.SetCacheReadTransferRatio(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferRatio adds value to the "cache_read_transfer_ratio" field.
+func (_u *UserUpdate) AddCacheReadTransferRatio(v float64) *UserUpdate {
+	_u.mutation.AddCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (_u *UserUpdate) SetCacheReadTransferProbability(v float64) *UserUpdate {
+	_u.mutation.ResetCacheReadTransferProbability()
+	_u.mutation.SetCacheReadTransferProbability(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferProbability sets the "cache_read_transfer_probability" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableCacheReadTransferProbability(v *float64) *UserUpdate {
+	if v != nil {
+		_u.SetCacheReadTransferProbability(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferProbability adds value to the "cache_read_transfer_probability" field.
+func (_u *UserUpdate) AddCacheReadTransferProbability(v float64) *UserUpdate {
+	_u.mutation.AddCacheReadTransferProbability(v)
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdate) AddAPIKeyIDs(ids ...int64) *UserUpdate {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -708,6 +750,18 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TotpEnabledAtCleared() {
 		_spec.ClearField(user.FieldTotpEnabledAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.CacheReadTransferRatio(); ok {
+		_spec.SetField(user.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferRatio(); ok {
+		_spec.AddField(user.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.CacheReadTransferProbability(); ok {
+		_spec.SetField(user.FieldCacheReadTransferProbability, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferProbability(); ok {
+		_spec.AddField(user.FieldCacheReadTransferProbability, field.TypeFloat64, value)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1352,6 +1406,48 @@ func (_u *UserUpdateOne) ClearTotpEnabledAt() *UserUpdateOne {
 	return _u
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (_u *UserUpdateOne) SetCacheReadTransferRatio(v float64) *UserUpdateOne {
+	_u.mutation.ResetCacheReadTransferRatio()
+	_u.mutation.SetCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferRatio sets the "cache_read_transfer_ratio" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableCacheReadTransferRatio(v *float64) *UserUpdateOne {
+	if v != nil {
+		_u.SetCacheReadTransferRatio(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferRatio adds value to the "cache_read_transfer_ratio" field.
+func (_u *UserUpdateOne) AddCacheReadTransferRatio(v float64) *UserUpdateOne {
+	_u.mutation.AddCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (_u *UserUpdateOne) SetCacheReadTransferProbability(v float64) *UserUpdateOne {
+	_u.mutation.ResetCacheReadTransferProbability()
+	_u.mutation.SetCacheReadTransferProbability(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferProbability sets the "cache_read_transfer_probability" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableCacheReadTransferProbability(v *float64) *UserUpdateOne {
+	if v != nil {
+		_u.SetCacheReadTransferProbability(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferProbability adds value to the "cache_read_transfer_probability" field.
+func (_u *UserUpdateOne) AddCacheReadTransferProbability(v float64) *UserUpdateOne {
+	_u.mutation.AddCacheReadTransferProbability(v)
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdateOne) AddAPIKeyIDs(ids ...int64) *UserUpdateOne {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -1848,6 +1944,18 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.TotpEnabledAtCleared() {
 		_spec.ClearField(user.FieldTotpEnabledAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.CacheReadTransferRatio(); ok {
+		_spec.SetField(user.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferRatio(); ok {
+		_spec.AddField(user.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.CacheReadTransferProbability(); ok {
+		_spec.SetField(user.FieldCacheReadTransferProbability, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferProbability(); ok {
+		_spec.AddField(user.FieldCacheReadTransferProbability, field.TypeFloat64, value)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{

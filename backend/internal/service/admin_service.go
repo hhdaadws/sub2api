@@ -97,7 +97,9 @@ type UpdateUserInput struct {
 	AllowedGroups *[]int64 // 使用指针区分"未提供"和"设置为空数组"
 	// GroupRates 用户专属分组倍率配置
 	// map[groupID]*rate，nil 表示删除该分组的专属倍率
-	GroupRates map[int64]*float64
+	GroupRates                   map[int64]*float64
+	CacheReadTransferRatio       *float64
+	CacheReadTransferProbability *float64
 }
 
 type CreateGroupInput struct {
@@ -414,6 +416,8 @@ func (s *adminServiceImpl) UpdateUser(ctx context.Context, id int64, input *Upda
 	oldConcurrency := user.Concurrency
 	oldStatus := user.Status
 	oldRole := user.Role
+	oldCacheReadTransferRatio := user.CacheReadTransferRatio
+	oldCacheReadTransferProbability := user.CacheReadTransferProbability
 
 	if input.Email != "" {
 		user.Email = input.Email
@@ -443,6 +447,13 @@ func (s *adminServiceImpl) UpdateUser(ctx context.Context, id int64, input *Upda
 		user.AllowedGroups = *input.AllowedGroups
 	}
 
+	if input.CacheReadTransferRatio != nil {
+		user.CacheReadTransferRatio = *input.CacheReadTransferRatio
+	}
+	if input.CacheReadTransferProbability != nil {
+		user.CacheReadTransferProbability = *input.CacheReadTransferProbability
+	}
+
 	if err := s.userRepo.Update(ctx, user); err != nil {
 		return nil, err
 	}
@@ -455,7 +466,8 @@ func (s *adminServiceImpl) UpdateUser(ctx context.Context, id int64, input *Upda
 	}
 
 	if s.authCacheInvalidator != nil {
-		if user.Concurrency != oldConcurrency || user.Status != oldStatus || user.Role != oldRole {
+		if user.Concurrency != oldConcurrency || user.Status != oldStatus || user.Role != oldRole ||
+			user.CacheReadTransferRatio != oldCacheReadTransferRatio || user.CacheReadTransferProbability != oldCacheReadTransferProbability {
 			s.authCacheInvalidator.InvalidateAuthCacheByUserID(ctx, user.ID)
 		}
 	}

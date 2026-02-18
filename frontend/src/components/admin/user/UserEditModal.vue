@@ -37,6 +37,32 @@
         <label class="input-label">{{ t('admin.users.columns.concurrency') }}</label>
         <input v-model.number="form.concurrency" type="number" class="input" />
       </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="input-label">{{ t('admin.groups.cacheReadTransfer.ratio') }}</label>
+          <input
+            v-model.number="form.cache_read_transfer_ratio"
+            type="number"
+            step="0.01"
+            min="0"
+            max="1"
+            class="input"
+          />
+          <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.ratioHint') }}</p>
+        </div>
+        <div>
+          <label class="input-label">{{ t('admin.groups.cacheReadTransfer.probability') }}</label>
+          <input
+            v-model.number="form.cache_read_transfer_probability"
+            type="number"
+            step="0.01"
+            min="0"
+            max="1"
+            class="input"
+          />
+          <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.probabilityHint') }}</p>
+        </div>
+      </div>
       <UserAttributeForm v-model="form.customAttributes" :user-id="user?.id" />
     </form>
     <template #footer>
@@ -66,11 +92,11 @@ const emit = defineEmits(['close', 'success'])
 const { t } = useI18n(); const appStore = useAppStore(); const { copyToClipboard } = useClipboard()
 
 const submitting = ref(false); const passwordCopied = ref(false)
-const form = reactive({ email: '', password: '', username: '', notes: '', concurrency: 1, customAttributes: {} as UserAttributeValuesMap })
+const form = reactive({ email: '', password: '', username: '', notes: '', concurrency: 1, cache_read_transfer_ratio: 0, cache_read_transfer_probability: 0, customAttributes: {} as UserAttributeValuesMap })
 
 watch(() => props.user, (u) => {
   if (u) {
-    Object.assign(form, { email: u.email, password: '', username: u.username || '', notes: u.notes || '', concurrency: u.concurrency, customAttributes: {} })
+    Object.assign(form, { email: u.email, password: '', username: u.username || '', notes: u.notes || '', concurrency: u.concurrency, cache_read_transfer_ratio: u.cache_read_transfer_ratio || 0, cache_read_transfer_probability: u.cache_read_transfer_probability || 0, customAttributes: {} })
     passwordCopied.value = false
   }
 }, { immediate: true })
@@ -97,7 +123,7 @@ const handleUpdateUser = async () => {
   }
   submitting.value = true
   try {
-    const data: any = { email: form.email, username: form.username, notes: form.notes, concurrency: form.concurrency }
+    const data: any = { email: form.email, username: form.username, notes: form.notes, concurrency: form.concurrency, cache_read_transfer_ratio: form.cache_read_transfer_ratio, cache_read_transfer_probability: form.cache_read_transfer_probability }
     if (form.password.trim()) data.password = form.password.trim()
     await adminAPI.users.update(props.user.id, data)
     if (Object.keys(form.customAttributes).length > 0) await adminAPI.userAttributes.updateUserAttributeValues(props.user.id, form.customAttributes)

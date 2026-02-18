@@ -154,10 +154,18 @@ func (h *GatewayHandler) Messages(c *gin.Context) {
 		service.BindErrorPassthroughService(c, h.errorPassthroughService)
 	}
 
-	// 缓存读取转移：按概率触发，将转移比例写入 context
-	if apiKey.Group != nil && apiKey.Group.CacheReadTransferRatio > 0 && apiKey.Group.CacheReadTransferProbability > 0 {
-		if mathrand.Float64() < apiKey.Group.CacheReadTransferProbability {
-			c.Set(string(ctxkey.CacheReadTransferRatio), apiKey.Group.CacheReadTransferRatio)
+	// 缓存读取转移：用户级别配置优先，否则回退分组配置
+	var transferRatio, transferProbability float64
+	if apiKey.User != nil && apiKey.User.CacheReadTransferRatio > 0 && apiKey.User.CacheReadTransferProbability > 0 {
+		transferRatio = apiKey.User.CacheReadTransferRatio
+		transferProbability = apiKey.User.CacheReadTransferProbability
+	} else if apiKey.Group != nil && apiKey.Group.CacheReadTransferRatio > 0 && apiKey.Group.CacheReadTransferProbability > 0 {
+		transferRatio = apiKey.Group.CacheReadTransferRatio
+		transferProbability = apiKey.Group.CacheReadTransferProbability
+	}
+	if transferRatio > 0 && transferProbability > 0 {
+		if mathrand.Float64() < transferProbability {
+			c.Set(string(ctxkey.CacheReadTransferRatio), transferRatio)
 		}
 	}
 

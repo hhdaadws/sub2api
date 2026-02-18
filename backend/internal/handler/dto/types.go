@@ -26,7 +26,9 @@ type AdminUser struct {
 	Notes string `json:"notes"`
 	// GroupRates 用户专属分组倍率配置
 	// map[groupID]rateMultiplier
-	GroupRates map[int64]float64 `json:"group_rates,omitempty"`
+	GroupRates                   map[int64]float64 `json:"group_rates,omitempty"`
+	CacheReadTransferRatio       float64           `json:"cache_read_transfer_ratio"`
+	CacheReadTransferProbability float64           `json:"cache_read_transfer_probability"`
 }
 
 type APIKey struct {

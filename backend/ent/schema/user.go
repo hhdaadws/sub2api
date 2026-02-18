@@ -72,6 +72,14 @@ func (User) Fields() []ent.Field {
 		field.Time("totp_enabled_at").
 			Optional().
 			Nillable(),
+
+		// 缓存读取转移（用户级别覆盖，0 表示未设置，回退到分组配置）
+		field.Float("cache_read_transfer_ratio").
+			Default(0).
+			SchemaType(map[string]string{dialect.Postgres: "decimal(10,4)"}),
+		field.Float("cache_read_transfer_probability").
+			Default(0).
+			SchemaType(map[string]string{dialect.Postgres: "decimal(10,4)"}),
 	}
 }
 

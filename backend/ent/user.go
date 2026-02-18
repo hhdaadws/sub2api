@@ -45,6 +45,10 @@ type User struct {
 	TotpEnabled bool `json:"totp_enabled,omitempty"`
 	// TotpEnabledAt holds the value of the "totp_enabled_at" field.
 	TotpEnabledAt *time.Time `json:"totp_enabled_at,omitempty"`
+	// CacheReadTransferRatio holds the value of the "cache_read_transfer_ratio" field.
+	CacheReadTransferRatio float64 `json:"cache_read_transfer_ratio,omitempty"`
+	// CacheReadTransferProbability holds the value of the "cache_read_transfer_probability" field.
+	CacheReadTransferProbability float64 `json:"cache_read_transfer_probability,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -175,7 +179,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldTotpEnabled:
 			values[i] = new(sql.NullBool)
-		case user.FieldBalance:
+		case user.FieldBalance, user.FieldCacheReadTransferRatio, user.FieldCacheReadTransferProbability:
 			values[i] = new(sql.NullFloat64)
 		case user.FieldID, user.FieldConcurrency:
 			values[i] = new(sql.NullInt64)
@@ -290,6 +294,18 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TotpEnabledAt = new(time.Time)
 				*_m.TotpEnabledAt = value.Time
+			}
+		case user.FieldCacheReadTransferRatio:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cache_read_transfer_ratio", values[i])
+			} else if value.Valid {
+				_m.CacheReadTransferRatio = value.Float64
+			}
+		case user.FieldCacheReadTransferProbability:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cache_read_transfer_probability", values[i])
+			} else if value.Valid {
+				_m.CacheReadTransferProbability = value.Float64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -424,6 +440,12 @@ func (_m *User) String() string {
 		builder.WriteString("totp_enabled_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("cache_read_transfer_ratio=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CacheReadTransferRatio))
+	builder.WriteString(", ")
+	builder.WriteString("cache_read_transfer_probability=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CacheReadTransferProbability))
 	builder.WriteByte(')')
 	return builder.String()
 }

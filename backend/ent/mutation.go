@@ -18129,56 +18129,60 @@ func (m *UsageLogMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int64
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	deleted_at                    *time.Time
-	email                         *string
-	password_hash                 *string
-	role                          *string
-	balance                       *float64
-	addbalance                    *float64
-	concurrency                   *int
-	addconcurrency                *int
-	status                        *string
-	username                      *string
-	notes                         *string
-	totp_secret_encrypted         *string
-	totp_enabled                  *bool
-	totp_enabled_at               *time.Time
-	clearedFields                 map[string]struct{}
-	api_keys                      map[int64]struct{}
-	removedapi_keys               map[int64]struct{}
-	clearedapi_keys               bool
-	redeem_codes                  map[int64]struct{}
-	removedredeem_codes           map[int64]struct{}
-	clearedredeem_codes           bool
-	subscriptions                 map[int64]struct{}
-	removedsubscriptions          map[int64]struct{}
-	clearedsubscriptions          bool
-	assigned_subscriptions        map[int64]struct{}
-	removedassigned_subscriptions map[int64]struct{}
-	clearedassigned_subscriptions bool
-	announcement_reads            map[int64]struct{}
-	removedannouncement_reads     map[int64]struct{}
-	clearedannouncement_reads     bool
-	allowed_groups                map[int64]struct{}
-	removedallowed_groups         map[int64]struct{}
-	clearedallowed_groups         bool
-	usage_logs                    map[int64]struct{}
-	removedusage_logs             map[int64]struct{}
-	clearedusage_logs             bool
-	attribute_values              map[int64]struct{}
-	removedattribute_values       map[int64]struct{}
-	clearedattribute_values       bool
-	promo_code_usages             map[int64]struct{}
-	removedpromo_code_usages      map[int64]struct{}
-	clearedpromo_code_usages      bool
-	done                          bool
-	oldValue                      func(context.Context) (*User, error)
-	predicates                    []predicate.User
+	op                                 Op
+	typ                                string
+	id                                 *int64
+	created_at                         *time.Time
+	updated_at                         *time.Time
+	deleted_at                         *time.Time
+	email                              *string
+	password_hash                      *string
+	role                               *string
+	balance                            *float64
+	addbalance                         *float64
+	concurrency                        *int
+	addconcurrency                     *int
+	status                             *string
+	username                           *string
+	notes                              *string
+	totp_secret_encrypted              *string
+	totp_enabled                       *bool
+	totp_enabled_at                    *time.Time
+	cache_read_transfer_ratio          *float64
+	addcache_read_transfer_ratio       *float64
+	cache_read_transfer_probability    *float64
+	addcache_read_transfer_probability *float64
+	clearedFields                      map[string]struct{}
+	api_keys                           map[int64]struct{}
+	removedapi_keys                    map[int64]struct{}
+	clearedapi_keys                    bool
+	redeem_codes                       map[int64]struct{}
+	removedredeem_codes                map[int64]struct{}
+	clearedredeem_codes                bool
+	subscriptions                      map[int64]struct{}
+	removedsubscriptions               map[int64]struct{}
+	clearedsubscriptions               bool
+	assigned_subscriptions             map[int64]struct{}
+	removedassigned_subscriptions      map[int64]struct{}
+	clearedassigned_subscriptions      bool
+	announcement_reads                 map[int64]struct{}
+	removedannouncement_reads          map[int64]struct{}
+	clearedannouncement_reads          bool
+	allowed_groups                     map[int64]struct{}
+	removedallowed_groups              map[int64]struct{}
+	clearedallowed_groups              bool
+	usage_logs                         map[int64]struct{}
+	removedusage_logs                  map[int64]struct{}
+	clearedusage_logs                  bool
+	attribute_values                   map[int64]struct{}
+	removedattribute_values            map[int64]struct{}
+	clearedattribute_values            bool
+	promo_code_usages                  map[int64]struct{}
+	removedpromo_code_usages           map[int64]struct{}
+	clearedpromo_code_usages           bool
+	done                               bool
+	oldValue                           func(context.Context) (*User, error)
+	predicates                         []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -18862,6 +18866,118 @@ func (m *UserMutation) ResetTotpEnabledAt() {
 	delete(m.clearedFields, user.FieldTotpEnabledAt)
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (m *UserMutation) SetCacheReadTransferRatio(f float64) {
+	m.cache_read_transfer_ratio = &f
+	m.addcache_read_transfer_ratio = nil
+}
+
+// CacheReadTransferRatio returns the value of the "cache_read_transfer_ratio" field in the mutation.
+func (m *UserMutation) CacheReadTransferRatio() (r float64, exists bool) {
+	v := m.cache_read_transfer_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCacheReadTransferRatio returns the old "cache_read_transfer_ratio" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCacheReadTransferRatio(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCacheReadTransferRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCacheReadTransferRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCacheReadTransferRatio: %w", err)
+	}
+	return oldValue.CacheReadTransferRatio, nil
+}
+
+// AddCacheReadTransferRatio adds f to the "cache_read_transfer_ratio" field.
+func (m *UserMutation) AddCacheReadTransferRatio(f float64) {
+	if m.addcache_read_transfer_ratio != nil {
+		*m.addcache_read_transfer_ratio += f
+	} else {
+		m.addcache_read_transfer_ratio = &f
+	}
+}
+
+// AddedCacheReadTransferRatio returns the value that was added to the "cache_read_transfer_ratio" field in this mutation.
+func (m *UserMutation) AddedCacheReadTransferRatio() (r float64, exists bool) {
+	v := m.addcache_read_transfer_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCacheReadTransferRatio resets all changes to the "cache_read_transfer_ratio" field.
+func (m *UserMutation) ResetCacheReadTransferRatio() {
+	m.cache_read_transfer_ratio = nil
+	m.addcache_read_transfer_ratio = nil
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (m *UserMutation) SetCacheReadTransferProbability(f float64) {
+	m.cache_read_transfer_probability = &f
+	m.addcache_read_transfer_probability = nil
+}
+
+// CacheReadTransferProbability returns the value of the "cache_read_transfer_probability" field in the mutation.
+func (m *UserMutation) CacheReadTransferProbability() (r float64, exists bool) {
+	v := m.cache_read_transfer_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCacheReadTransferProbability returns the old "cache_read_transfer_probability" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCacheReadTransferProbability(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCacheReadTransferProbability is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCacheReadTransferProbability requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCacheReadTransferProbability: %w", err)
+	}
+	return oldValue.CacheReadTransferProbability, nil
+}
+
+// AddCacheReadTransferProbability adds f to the "cache_read_transfer_probability" field.
+func (m *UserMutation) AddCacheReadTransferProbability(f float64) {
+	if m.addcache_read_transfer_probability != nil {
+		*m.addcache_read_transfer_probability += f
+	} else {
+		m.addcache_read_transfer_probability = &f
+	}
+}
+
+// AddedCacheReadTransferProbability returns the value that was added to the "cache_read_transfer_probability" field in this mutation.
+func (m *UserMutation) AddedCacheReadTransferProbability() (r float64, exists bool) {
+	v := m.addcache_read_transfer_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCacheReadTransferProbability resets all changes to the "cache_read_transfer_probability" field.
+func (m *UserMutation) ResetCacheReadTransferProbability() {
+	m.cache_read_transfer_probability = nil
+	m.addcache_read_transfer_probability = nil
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by ids.
 func (m *UserMutation) AddAPIKeyIDs(ids ...int64) {
 	if m.api_keys == nil {
@@ -19382,7 +19498,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -19425,6 +19541,12 @@ func (m *UserMutation) Fields() []string {
 	if m.totp_enabled_at != nil {
 		fields = append(fields, user.FieldTotpEnabledAt)
 	}
+	if m.cache_read_transfer_ratio != nil {
+		fields = append(fields, user.FieldCacheReadTransferRatio)
+	}
+	if m.cache_read_transfer_probability != nil {
+		fields = append(fields, user.FieldCacheReadTransferProbability)
+	}
 	return fields
 }
 
@@ -19461,6 +19583,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.TotpEnabled()
 	case user.FieldTotpEnabledAt:
 		return m.TotpEnabledAt()
+	case user.FieldCacheReadTransferRatio:
+		return m.CacheReadTransferRatio()
+	case user.FieldCacheReadTransferProbability:
+		return m.CacheReadTransferProbability()
 	}
 	return nil, false
 }
@@ -19498,6 +19624,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTotpEnabled(ctx)
 	case user.FieldTotpEnabledAt:
 		return m.OldTotpEnabledAt(ctx)
+	case user.FieldCacheReadTransferRatio:
+		return m.OldCacheReadTransferRatio(ctx)
+	case user.FieldCacheReadTransferProbability:
+		return m.OldCacheReadTransferProbability(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -19605,6 +19735,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTotpEnabledAt(v)
 		return nil
+	case user.FieldCacheReadTransferRatio:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCacheReadTransferRatio(v)
+		return nil
+	case user.FieldCacheReadTransferProbability:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCacheReadTransferProbability(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -19619,6 +19763,12 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addconcurrency != nil {
 		fields = append(fields, user.FieldConcurrency)
 	}
+	if m.addcache_read_transfer_ratio != nil {
+		fields = append(fields, user.FieldCacheReadTransferRatio)
+	}
+	if m.addcache_read_transfer_probability != nil {
+		fields = append(fields, user.FieldCacheReadTransferProbability)
+	}
 	return fields
 }
 
@@ -19631,6 +19781,10 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedBalance()
 	case user.FieldConcurrency:
 		return m.AddedConcurrency()
+	case user.FieldCacheReadTransferRatio:
+		return m.AddedCacheReadTransferRatio()
+	case user.FieldCacheReadTransferProbability:
+		return m.AddedCacheReadTransferProbability()
 	}
 	return nil, false
 }
@@ -19653,6 +19807,20 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddConcurrency(v)
+		return nil
+	case user.FieldCacheReadTransferRatio:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCacheReadTransferRatio(v)
+		return nil
+	case user.FieldCacheReadTransferProbability:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCacheReadTransferProbability(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
@@ -19743,6 +19911,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldTotpEnabledAt:
 		m.ResetTotpEnabledAt()
+		return nil
+	case user.FieldCacheReadTransferRatio:
+		m.ResetCacheReadTransferRatio()
+		return nil
+	case user.FieldCacheReadTransferProbability:
+		m.ResetCacheReadTransferProbability()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

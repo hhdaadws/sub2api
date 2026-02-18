@@ -884,6 +884,14 @@ func init() {
 	userDescTotpEnabled := userFields[9].Descriptor()
 	// user.DefaultTotpEnabled holds the default value on creation for the totp_enabled field.
 	user.DefaultTotpEnabled = userDescTotpEnabled.Default.(bool)
+	// userDescCacheReadTransferRatio is the schema descriptor for cache_read_transfer_ratio field.
+	userDescCacheReadTransferRatio := userFields[11].Descriptor()
+	// user.DefaultCacheReadTransferRatio holds the default value on creation for the cache_read_transfer_ratio field.
+	user.DefaultCacheReadTransferRatio = userDescCacheReadTransferRatio.Default.(float64)
+	// userDescCacheReadTransferProbability is the schema descriptor for cache_read_transfer_probability field.
+	userDescCacheReadTransferProbability := userFields[12].Descriptor()
+	// user.DefaultCacheReadTransferProbability holds the default value on creation for the cache_read_transfer_probability field.
+	user.DefaultCacheReadTransferProbability = userDescCacheReadTransferProbability.Default.(float64)
 	userallowedgroupFields := schema.UserAllowedGroup{}.Fields()
 	_ = userallowedgroupFields
 	// userallowedgroupDescCreatedAt is the schema descriptor for created_at field.

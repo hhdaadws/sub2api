@@ -451,11 +451,13 @@ func userEntityToService(u *dbent.User) *service.User {
 		Balance:             u.Balance,
 		Concurrency:         u.Concurrency,
 		Status:              u.Status,
-		TotpSecretEncrypted: u.TotpSecretEncrypted,
-		TotpEnabled:         u.TotpEnabled,
-		TotpEnabledAt:       u.TotpEnabledAt,
-		CreatedAt:           u.CreatedAt,
-		UpdatedAt:           u.UpdatedAt,
+		TotpSecretEncrypted:          u.TotpSecretEncrypted,
+		TotpEnabled:                  u.TotpEnabled,
+		TotpEnabledAt:                u.TotpEnabledAt,
+		CacheReadTransferRatio:       u.CacheReadTransferRatio,
+		CacheReadTransferProbability: u.CacheReadTransferProbability,
+		CreatedAt:                    u.CreatedAt,
+		UpdatedAt:                    u.UpdatedAt,
 	}
 }
 

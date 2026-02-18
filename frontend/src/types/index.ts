@@ -45,6 +45,9 @@ export interface AdminUser extends User {
   group_rates?: Record<number, number>
   // 当前并发数（仅管理员列表接口返回）
   current_concurrency?: number
+  // 缓存读取转移（用户级别覆盖，0 表示未设置，回退到分组配置）
+  cache_read_transfer_ratio: number
+  cache_read_transfer_probability: number
 }
 
 export interface LoginRequest {
@@ -1042,6 +1045,9 @@ export interface UpdateUserRequest {
   // 用户专属分组倍率配置 (group_id -> rate_multiplier | null)
   // null 表示删除该分组的专属倍率
   group_rates?: Record<number, number | null>
+  // 缓存读取转移（用户级别覆盖）
+  cache_read_transfer_ratio?: number
+  cache_read_transfer_probability?: number
 }
 
 export interface ChangePasswordRequest {
