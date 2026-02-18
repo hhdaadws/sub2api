@@ -475,6 +475,48 @@ func (_u *GroupUpdate) AppendSupportedModelScopes(v []string) *GroupUpdate {
 	return _u
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (_u *GroupUpdate) SetCacheReadTransferRatio(v float64) *GroupUpdate {
+	_u.mutation.ResetCacheReadTransferRatio()
+	_u.mutation.SetCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferRatio sets the "cache_read_transfer_ratio" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableCacheReadTransferRatio(v *float64) *GroupUpdate {
+	if v != nil {
+		_u.SetCacheReadTransferRatio(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferRatio adds value to the "cache_read_transfer_ratio" field.
+func (_u *GroupUpdate) AddCacheReadTransferRatio(v float64) *GroupUpdate {
+	_u.mutation.AddCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (_u *GroupUpdate) SetCacheReadTransferProbability(v float64) *GroupUpdate {
+	_u.mutation.ResetCacheReadTransferProbability()
+	_u.mutation.SetCacheReadTransferProbability(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferProbability sets the "cache_read_transfer_probability" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableCacheReadTransferProbability(v *float64) *GroupUpdate {
+	if v != nil {
+		_u.SetCacheReadTransferProbability(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferProbability adds value to the "cache_read_transfer_probability" field.
+func (_u *GroupUpdate) AddCacheReadTransferProbability(v float64) *GroupUpdate {
+	_u.mutation.AddCacheReadTransferProbability(v)
+	return _u
+}
+
 // SetSortOrder sets the "sort_order" field.
 func (_u *GroupUpdate) SetSortOrder(v int) *GroupUpdate {
 	_u.mutation.ResetSortOrder()
@@ -932,6 +974,18 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, group.FieldSupportedModelScopes, value)
 		})
+	}
+	if value, ok := _u.mutation.CacheReadTransferRatio(); ok {
+		_spec.SetField(group.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferRatio(); ok {
+		_spec.AddField(group.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.CacheReadTransferProbability(); ok {
+		_spec.SetField(group.FieldCacheReadTransferProbability, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferProbability(); ok {
+		_spec.AddField(group.FieldCacheReadTransferProbability, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(group.FieldSortOrder, field.TypeInt, value)
@@ -1693,6 +1747,48 @@ func (_u *GroupUpdateOne) AppendSupportedModelScopes(v []string) *GroupUpdateOne
 	return _u
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (_u *GroupUpdateOne) SetCacheReadTransferRatio(v float64) *GroupUpdateOne {
+	_u.mutation.ResetCacheReadTransferRatio()
+	_u.mutation.SetCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferRatio sets the "cache_read_transfer_ratio" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableCacheReadTransferRatio(v *float64) *GroupUpdateOne {
+	if v != nil {
+		_u.SetCacheReadTransferRatio(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferRatio adds value to the "cache_read_transfer_ratio" field.
+func (_u *GroupUpdateOne) AddCacheReadTransferRatio(v float64) *GroupUpdateOne {
+	_u.mutation.AddCacheReadTransferRatio(v)
+	return _u
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (_u *GroupUpdateOne) SetCacheReadTransferProbability(v float64) *GroupUpdateOne {
+	_u.mutation.ResetCacheReadTransferProbability()
+	_u.mutation.SetCacheReadTransferProbability(v)
+	return _u
+}
+
+// SetNillableCacheReadTransferProbability sets the "cache_read_transfer_probability" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableCacheReadTransferProbability(v *float64) *GroupUpdateOne {
+	if v != nil {
+		_u.SetCacheReadTransferProbability(*v)
+	}
+	return _u
+}
+
+// AddCacheReadTransferProbability adds value to the "cache_read_transfer_probability" field.
+func (_u *GroupUpdateOne) AddCacheReadTransferProbability(v float64) *GroupUpdateOne {
+	_u.mutation.AddCacheReadTransferProbability(v)
+	return _u
+}
+
 // SetSortOrder sets the "sort_order" field.
 func (_u *GroupUpdateOne) SetSortOrder(v int) *GroupUpdateOne {
 	_u.mutation.ResetSortOrder()
@@ -2180,6 +2276,18 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, group.FieldSupportedModelScopes, value)
 		})
+	}
+	if value, ok := _u.mutation.CacheReadTransferRatio(); ok {
+		_spec.SetField(group.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferRatio(); ok {
+		_spec.AddField(group.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.CacheReadTransferProbability(); ok {
+		_spec.SetField(group.FieldCacheReadTransferProbability, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCacheReadTransferProbability(); ok {
+		_spec.AddField(group.FieldCacheReadTransferProbability, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(group.FieldSortOrder, field.TypeInt, value)

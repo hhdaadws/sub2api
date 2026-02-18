@@ -413,8 +413,16 @@ func init() {
 	groupDescSupportedModelScopes := groupFields[20].Descriptor()
 	// group.DefaultSupportedModelScopes holds the default value on creation for the supported_model_scopes field.
 	group.DefaultSupportedModelScopes = groupDescSupportedModelScopes.Default.([]string)
+	// groupDescCacheReadTransferRatio is the schema descriptor for cache_read_transfer_ratio field.
+	groupDescCacheReadTransferRatio := groupFields[21].Descriptor()
+	// group.DefaultCacheReadTransferRatio holds the default value on creation for the cache_read_transfer_ratio field.
+	group.DefaultCacheReadTransferRatio = groupDescCacheReadTransferRatio.Default.(float64)
+	// groupDescCacheReadTransferProbability is the schema descriptor for cache_read_transfer_probability field.
+	groupDescCacheReadTransferProbability := groupFields[22].Descriptor()
+	// group.DefaultCacheReadTransferProbability holds the default value on creation for the cache_read_transfer_probability field.
+	group.DefaultCacheReadTransferProbability = groupDescCacheReadTransferProbability.Default.(float64)
 	// groupDescSortOrder is the schema descriptor for sort_order field.
-	groupDescSortOrder := groupFields[21].Descriptor()
+	groupDescSortOrder := groupFields[23].Descriptor()
 	// group.DefaultSortOrder holds the default value on creation for the sort_order field.
 	group.DefaultSortOrder = groupDescSortOrder.Default.(int)
 	promocodeFields := schema.PromoCode{}.Fields()

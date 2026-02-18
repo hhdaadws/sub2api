@@ -45,6 +45,10 @@ type Group struct {
 	// 可选值: claude, gemini_text, gemini_image
 	SupportedModelScopes []string
 
+	// 缓存读取转移
+	CacheReadTransferRatio       float64
+	CacheReadTransferProbability float64
+
 	// 分组排序
 	SortOrder int
 

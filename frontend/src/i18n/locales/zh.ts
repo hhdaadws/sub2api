@@ -1277,6 +1277,13 @@ export default {
         geminiText: 'Gemini Text',
         geminiImage: 'Gemini Image',
         hint: '至少选择一个模型系列'
+      },
+      cacheReadTransfer: {
+        title: '缓存读取转移',
+        ratio: '转移比例',
+        ratioHint: '0~1，将 cache_read 的该比例转移到 cache_creation 计费',
+        probability: '触发概率',
+        probabilityHint: '0~1，每次请求触发转移的概率'
       }
     },
 

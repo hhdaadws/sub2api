@@ -340,6 +340,34 @@ func (_c *GroupCreate) SetSupportedModelScopes(v []string) *GroupCreate {
 	return _c
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (_c *GroupCreate) SetCacheReadTransferRatio(v float64) *GroupCreate {
+	_c.mutation.SetCacheReadTransferRatio(v)
+	return _c
+}
+
+// SetNillableCacheReadTransferRatio sets the "cache_read_transfer_ratio" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableCacheReadTransferRatio(v *float64) *GroupCreate {
+	if v != nil {
+		_c.SetCacheReadTransferRatio(*v)
+	}
+	return _c
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (_c *GroupCreate) SetCacheReadTransferProbability(v float64) *GroupCreate {
+	_c.mutation.SetCacheReadTransferProbability(v)
+	return _c
+}
+
+// SetNillableCacheReadTransferProbability sets the "cache_read_transfer_probability" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableCacheReadTransferProbability(v *float64) *GroupCreate {
+	if v != nil {
+		_c.SetCacheReadTransferProbability(*v)
+	}
+	return _c
+}
+
 // SetSortOrder sets the "sort_order" field.
 func (_c *GroupCreate) SetSortOrder(v int) *GroupCreate {
 	_c.mutation.SetSortOrder(v)
@@ -535,6 +563,14 @@ func (_c *GroupCreate) defaults() error {
 		v := group.DefaultSupportedModelScopes
 		_c.mutation.SetSupportedModelScopes(v)
 	}
+	if _, ok := _c.mutation.CacheReadTransferRatio(); !ok {
+		v := group.DefaultCacheReadTransferRatio
+		_c.mutation.SetCacheReadTransferRatio(v)
+	}
+	if _, ok := _c.mutation.CacheReadTransferProbability(); !ok {
+		v := group.DefaultCacheReadTransferProbability
+		_c.mutation.SetCacheReadTransferProbability(v)
+	}
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		v := group.DefaultSortOrder
 		_c.mutation.SetSortOrder(v)
@@ -602,6 +638,12 @@ func (_c *GroupCreate) check() error {
 	}
 	if _, ok := _c.mutation.SupportedModelScopes(); !ok {
 		return &ValidationError{Name: "supported_model_scopes", err: errors.New(`ent: missing required field "Group.supported_model_scopes"`)}
+	}
+	if _, ok := _c.mutation.CacheReadTransferRatio(); !ok {
+		return &ValidationError{Name: "cache_read_transfer_ratio", err: errors.New(`ent: missing required field "Group.cache_read_transfer_ratio"`)}
+	}
+	if _, ok := _c.mutation.CacheReadTransferProbability(); !ok {
+		return &ValidationError{Name: "cache_read_transfer_probability", err: errors.New(`ent: missing required field "Group.cache_read_transfer_probability"`)}
 	}
 	if _, ok := _c.mutation.SortOrder(); !ok {
 		return &ValidationError{Name: "sort_order", err: errors.New(`ent: missing required field "Group.sort_order"`)}
@@ -728,6 +770,14 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.SupportedModelScopes(); ok {
 		_spec.SetField(group.FieldSupportedModelScopes, field.TypeJSON, value)
 		_node.SupportedModelScopes = value
+	}
+	if value, ok := _c.mutation.CacheReadTransferRatio(); ok {
+		_spec.SetField(group.FieldCacheReadTransferRatio, field.TypeFloat64, value)
+		_node.CacheReadTransferRatio = value
+	}
+	if value, ok := _c.mutation.CacheReadTransferProbability(); ok {
+		_spec.SetField(group.FieldCacheReadTransferProbability, field.TypeFloat64, value)
+		_node.CacheReadTransferProbability = value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
 		_spec.SetField(group.FieldSortOrder, field.TypeInt, value)
@@ -1291,6 +1341,42 @@ func (u *GroupUpsert) UpdateSupportedModelScopes() *GroupUpsert {
 	return u
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (u *GroupUpsert) SetCacheReadTransferRatio(v float64) *GroupUpsert {
+	u.Set(group.FieldCacheReadTransferRatio, v)
+	return u
+}
+
+// UpdateCacheReadTransferRatio sets the "cache_read_transfer_ratio" field to the value that was provided on create.
+func (u *GroupUpsert) UpdateCacheReadTransferRatio() *GroupUpsert {
+	u.SetExcluded(group.FieldCacheReadTransferRatio)
+	return u
+}
+
+// AddCacheReadTransferRatio adds v to the "cache_read_transfer_ratio" field.
+func (u *GroupUpsert) AddCacheReadTransferRatio(v float64) *GroupUpsert {
+	u.Add(group.FieldCacheReadTransferRatio, v)
+	return u
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (u *GroupUpsert) SetCacheReadTransferProbability(v float64) *GroupUpsert {
+	u.Set(group.FieldCacheReadTransferProbability, v)
+	return u
+}
+
+// UpdateCacheReadTransferProbability sets the "cache_read_transfer_probability" field to the value that was provided on create.
+func (u *GroupUpsert) UpdateCacheReadTransferProbability() *GroupUpsert {
+	u.SetExcluded(group.FieldCacheReadTransferProbability)
+	return u
+}
+
+// AddCacheReadTransferProbability adds v to the "cache_read_transfer_probability" field.
+func (u *GroupUpsert) AddCacheReadTransferProbability(v float64) *GroupUpsert {
+	u.Add(group.FieldCacheReadTransferProbability, v)
+	return u
+}
+
 // SetSortOrder sets the "sort_order" field.
 func (u *GroupUpsert) SetSortOrder(v int) *GroupUpsert {
 	u.Set(group.FieldSortOrder, v)
@@ -1820,6 +1906,48 @@ func (u *GroupUpsertOne) SetSupportedModelScopes(v []string) *GroupUpsertOne {
 func (u *GroupUpsertOne) UpdateSupportedModelScopes() *GroupUpsertOne {
 	return u.Update(func(s *GroupUpsert) {
 		s.UpdateSupportedModelScopes()
+	})
+}
+
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (u *GroupUpsertOne) SetCacheReadTransferRatio(v float64) *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetCacheReadTransferRatio(v)
+	})
+}
+
+// AddCacheReadTransferRatio adds v to the "cache_read_transfer_ratio" field.
+func (u *GroupUpsertOne) AddCacheReadTransferRatio(v float64) *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.AddCacheReadTransferRatio(v)
+	})
+}
+
+// UpdateCacheReadTransferRatio sets the "cache_read_transfer_ratio" field to the value that was provided on create.
+func (u *GroupUpsertOne) UpdateCacheReadTransferRatio() *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateCacheReadTransferRatio()
+	})
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (u *GroupUpsertOne) SetCacheReadTransferProbability(v float64) *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetCacheReadTransferProbability(v)
+	})
+}
+
+// AddCacheReadTransferProbability adds v to the "cache_read_transfer_probability" field.
+func (u *GroupUpsertOne) AddCacheReadTransferProbability(v float64) *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.AddCacheReadTransferProbability(v)
+	})
+}
+
+// UpdateCacheReadTransferProbability sets the "cache_read_transfer_probability" field to the value that was provided on create.
+func (u *GroupUpsertOne) UpdateCacheReadTransferProbability() *GroupUpsertOne {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateCacheReadTransferProbability()
 	})
 }
 
@@ -2521,6 +2649,48 @@ func (u *GroupUpsertBulk) SetSupportedModelScopes(v []string) *GroupUpsertBulk {
 func (u *GroupUpsertBulk) UpdateSupportedModelScopes() *GroupUpsertBulk {
 	return u.Update(func(s *GroupUpsert) {
 		s.UpdateSupportedModelScopes()
+	})
+}
+
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (u *GroupUpsertBulk) SetCacheReadTransferRatio(v float64) *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetCacheReadTransferRatio(v)
+	})
+}
+
+// AddCacheReadTransferRatio adds v to the "cache_read_transfer_ratio" field.
+func (u *GroupUpsertBulk) AddCacheReadTransferRatio(v float64) *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.AddCacheReadTransferRatio(v)
+	})
+}
+
+// UpdateCacheReadTransferRatio sets the "cache_read_transfer_ratio" field to the value that was provided on create.
+func (u *GroupUpsertBulk) UpdateCacheReadTransferRatio() *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateCacheReadTransferRatio()
+	})
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (u *GroupUpsertBulk) SetCacheReadTransferProbability(v float64) *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.SetCacheReadTransferProbability(v)
+	})
+}
+
+// AddCacheReadTransferProbability adds v to the "cache_read_transfer_probability" field.
+func (u *GroupUpsertBulk) AddCacheReadTransferProbability(v float64) *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.AddCacheReadTransferProbability(v)
+	})
+}
+
+// UpdateCacheReadTransferProbability sets the "cache_read_transfer_probability" field to the value that was provided on create.
+func (u *GroupUpsertBulk) UpdateCacheReadTransferProbability() *GroupUpsertBulk {
+	return u.Update(func(s *GroupUpsert) {
+		s.UpdateCacheReadTransferProbability()
 	})
 }
 

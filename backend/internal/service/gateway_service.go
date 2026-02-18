@@ -3923,6 +3923,18 @@ func (s *GatewayService) handleErrorResponse(ctx context.Context, resp *http.Res
 		)
 	}
 
+	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
+	if ContainsYesCaseInsensitive(body) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"type": "error",
+			"error": gin.H{
+				"type":    "invalid_request_error",
+				"message": "invalid request",
+			},
+		})
+		return nil, fmt.Errorf("upstream error: %d (overridden: body contains yes)", resp.StatusCode)
+	}
+
 	// 非 failover 错误也支持错误透传规则匹配。
 	if status, errType, errMsg, matched := applyErrorPassthroughRule(
 		c,
@@ -4080,6 +4092,18 @@ func (s *GatewayService) handleRetryExhaustedError(ctx context.Context, resp *ht
 			account.Type,
 			truncateForLog(respBody, s.cfg.Gateway.LogUpstreamErrorBodyMaxBytes),
 		)
+	}
+
+	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
+	if ContainsYesCaseInsensitive(respBody) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"type": "error",
+			"error": gin.H{
+				"type":    "invalid_request_error",
+				"message": "invalid request",
+			},
+		})
+		return nil, fmt.Errorf("upstream error: %d (retries exhausted, overridden: body contains yes)", resp.StatusCode)
 	}
 
 	if status, errType, errMsg, matched := applyErrorPassthroughRule(
@@ -4310,6 +4334,25 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 			}
 		}
 
+		// Cache Read Transfer: 重写 SSE 事件中的 cache_read → cache_creation
+		if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
+			ratio, _ := transferRatio.(float64)
+			if ratio > 0 {
+				if eventType == "message_start" {
+					if msg, ok := event["message"].(map[string]any); ok {
+						if u, ok := msg["usage"].(map[string]any); ok {
+							rewriteCacheReadTransferJSON(u, ratio)
+						}
+					}
+				}
+				if eventType == "message_delta" {
+					if u, ok := event["usage"].(map[string]any); ok {
+						rewriteCacheReadTransferJSON(u, ratio)
+					}
+				}
+			}
+		}
+
 		if needModelReplace {
 			if msg, ok := event["message"].(map[string]any); ok {
 				if model, ok := msg["model"].(string); ok && model == mappedModel {
@@ -4397,6 +4440,12 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 						}
 						s.parseSSEUsage(data, usage)
 					}
+
+					// Cache Read Transfer: 应用到内部 usage 结构（确保计费数据一致）
+					if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
+						ratio, _ := transferRatio.(float64)
+						applyCacheReadTransfer(usage, ratio)
+					}
 				}
 				continue
 			}
@@ -4482,6 +4531,45 @@ func (s *GatewayService) parseSSEUsage(data string, usage *ClaudeUsage) {
 			usage.CacheCreation1hTokens = int(cc1h.Int())
 		}
 	}
+}
+
+// applyCacheReadTransfer 将 cache_read_input_tokens 的指定比例转移到 cache_creation_input_tokens。
+// ratio 取值 0~1。修改 usage 结构体并返回 true 表示发生了变更。
+func applyCacheReadTransfer(usage *ClaudeUsage, ratio float64) bool {
+	if ratio <= 0 || ratio > 1 || usage.CacheReadInputTokens <= 0 {
+		return false
+	}
+	transferAmount := int(float64(usage.CacheReadInputTokens) * ratio)
+	if transferAmount <= 0 {
+		return false
+	}
+	usage.CacheReadInputTokens -= transferAmount
+	usage.CacheCreationInputTokens += transferAmount
+	return true
+}
+
+// rewriteCacheReadTransferJSON 在 JSON usage 对象中应用缓存读取转移。
+func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
+	if ratio <= 0 || ratio > 1 {
+		return false
+	}
+	cacheRead, _ := usageObj["cache_read_input_tokens"].(float64)
+	if cacheRead <= 0 {
+		return false
+	}
+	transferAmount := cacheRead * ratio
+	if transferAmount <= 0 {
+		return false
+	}
+	usageObj["cache_read_input_tokens"] = cacheRead - transferAmount
+	cacheCreation, _ := usageObj["cache_creation_input_tokens"].(float64)
+	usageObj["cache_creation_input_tokens"] = cacheCreation + transferAmount
+	return true
+}
+
+// ContainsYesCaseInsensitive 检查响应体是否包含 "yes"（不区分大小写）
+func ContainsYesCaseInsensitive(body []byte) bool {
+	return bytes.Contains(bytes.ToLower(body), []byte("yes"))
 }
 
 // applyCacheTTLOverride 将所有 cache creation tokens 归入指定的 TTL 类型。
@@ -4581,6 +4669,19 @@ func (s *GatewayService) handleNonStreamingResponse(ctx context.Context, resp *h
 				body = newBody
 			}
 			if newBody, err := sjson.SetBytes(body, "usage.cache_creation.ephemeral_1h_input_tokens", response.Usage.CacheCreation1hTokens); err == nil {
+				body = newBody
+			}
+		}
+	}
+
+	// Cache Read Transfer: 重写 non-streaming 响应中的 cache_read → cache_creation
+	if transferRatio, ok := c.Get(string(ctxkey.CacheReadTransferRatio)); ok {
+		ratio, _ := transferRatio.(float64)
+		if applyCacheReadTransfer(&response.Usage, ratio) {
+			if newBody, err := sjson.SetBytes(body, "usage.cache_read_input_tokens", response.Usage.CacheReadInputTokens); err == nil {
+				body = newBody
+			}
+			if newBody, err := sjson.SetBytes(body, "usage.cache_creation_input_tokens", response.Usage.CacheCreationInputTokens); err == nil {
 				body = newBody
 			}
 		}

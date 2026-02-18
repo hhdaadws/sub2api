@@ -63,6 +63,10 @@ const (
 	FieldMcpXMLInject = "mcp_xml_inject"
 	// FieldSupportedModelScopes holds the string denoting the supported_model_scopes field in the database.
 	FieldSupportedModelScopes = "supported_model_scopes"
+	// FieldCacheReadTransferRatio holds the string denoting the cache_read_transfer_ratio field in the database.
+	FieldCacheReadTransferRatio = "cache_read_transfer_ratio"
+	// FieldCacheReadTransferProbability holds the string denoting the cache_read_transfer_probability field in the database.
+	FieldCacheReadTransferProbability = "cache_read_transfer_probability"
 	// FieldSortOrder holds the string denoting the sort_order field in the database.
 	FieldSortOrder = "sort_order"
 	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
@@ -164,6 +168,8 @@ var Columns = []string{
 	FieldModelRoutingEnabled,
 	FieldMcpXMLInject,
 	FieldSupportedModelScopes,
+	FieldCacheReadTransferRatio,
+	FieldCacheReadTransferProbability,
 	FieldSortOrder,
 }
 
@@ -228,6 +234,10 @@ var (
 	DefaultMcpXMLInject bool
 	// DefaultSupportedModelScopes holds the default value on creation for the "supported_model_scopes" field.
 	DefaultSupportedModelScopes []string
+	// DefaultCacheReadTransferRatio holds the default value on creation for the "cache_read_transfer_ratio" field.
+	DefaultCacheReadTransferRatio float64
+	// DefaultCacheReadTransferProbability holds the default value on creation for the "cache_read_transfer_probability" field.
+	DefaultCacheReadTransferProbability float64
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder int
 )
@@ -348,6 +358,16 @@ func ByModelRoutingEnabled(opts ...sql.OrderTermOption) OrderOption {
 // ByMcpXMLInject orders the results by the mcp_xml_inject field.
 func ByMcpXMLInject(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMcpXMLInject, opts...).ToFunc()
+}
+
+// ByCacheReadTransferRatio orders the results by the cache_read_transfer_ratio field.
+func ByCacheReadTransferRatio(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCacheReadTransferRatio, opts...).ToFunc()
+}
+
+// ByCacheReadTransferProbability orders the results by the cache_read_transfer_probability field.
+func ByCacheReadTransferProbability(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCacheReadTransferProbability, opts...).ToFunc()
 }
 
 // BySortOrder orders the results by the sort_order field.

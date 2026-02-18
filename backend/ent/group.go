@@ -66,6 +66,10 @@ type Group struct {
 	McpXMLInject bool `json:"mcp_xml_inject,omitempty"`
 	// 支持的模型系列：claude, gemini_text, gemini_image
 	SupportedModelScopes []string `json:"supported_model_scopes,omitempty"`
+	// 缓存读取转移倍率：0~1，将 cache_read 的该比例转移到 cache_creation
+	CacheReadTransferRatio float64 `json:"cache_read_transfer_ratio,omitempty"`
+	// 缓存读取转移触发概率：0~1
+	CacheReadTransferProbability float64 `json:"cache_read_transfer_probability,omitempty"`
 	// 分组显示排序，数值越小越靠前
 	SortOrder int `json:"sort_order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -178,7 +182,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case group.FieldIsExclusive, group.FieldClaudeCodeOnly, group.FieldModelRoutingEnabled, group.FieldMcpXMLInject:
 			values[i] = new(sql.NullBool)
-		case group.FieldRateMultiplier, group.FieldDailyLimitUsd, group.FieldWeeklyLimitUsd, group.FieldMonthlyLimitUsd, group.FieldImagePrice1k, group.FieldImagePrice2k, group.FieldImagePrice4k:
+		case group.FieldRateMultiplier, group.FieldDailyLimitUsd, group.FieldWeeklyLimitUsd, group.FieldMonthlyLimitUsd, group.FieldImagePrice1k, group.FieldImagePrice2k, group.FieldImagePrice4k, group.FieldCacheReadTransferRatio, group.FieldCacheReadTransferProbability:
 			values[i] = new(sql.NullFloat64)
 		case group.FieldID, group.FieldDefaultValidityDays, group.FieldFallbackGroupID, group.FieldFallbackGroupIDOnInvalidRequest, group.FieldSortOrder:
 			values[i] = new(sql.NullInt64)
@@ -365,6 +369,18 @@ func (_m *Group) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field supported_model_scopes: %w", err)
 				}
 			}
+		case group.FieldCacheReadTransferRatio:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cache_read_transfer_ratio", values[i])
+			} else if value.Valid {
+				_m.CacheReadTransferRatio = value.Float64
+			}
+		case group.FieldCacheReadTransferProbability:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cache_read_transfer_probability", values[i])
+			} else if value.Valid {
+				_m.CacheReadTransferProbability = value.Float64
+			}
 		case group.FieldSortOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
@@ -538,6 +554,12 @@ func (_m *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("supported_model_scopes=")
 	builder.WriteString(fmt.Sprintf("%v", _m.SupportedModelScopes))
+	builder.WriteString(", ")
+	builder.WriteString("cache_read_transfer_ratio=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CacheReadTransferRatio))
+	builder.WriteString(", ")
+	builder.WriteString("cache_read_transfer_probability=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CacheReadTransferProbability))
 	builder.WriteString(", ")
 	builder.WriteString("sort_order=")
 	builder.WriteString(fmt.Sprintf("%v", _m.SortOrder))

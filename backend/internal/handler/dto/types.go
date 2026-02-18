@@ -94,6 +94,10 @@ type AdminGroup struct {
 	AccountGroups        []AccountGroup `json:"account_groups,omitempty"`
 	AccountCount         int64          `json:"account_count,omitempty"`
 
+	// 缓存读取转移
+	CacheReadTransferRatio       float64 `json:"cache_read_transfer_ratio"`
+	CacheReadTransferProbability float64 `json:"cache_read_transfer_probability"`
+
 	// 分组排序
 	SortOrder int `json:"sort_order"`
 }

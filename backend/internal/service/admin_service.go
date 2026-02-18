@@ -124,6 +124,9 @@ type CreateGroupInput struct {
 	MCPXMLInject        *bool
 	// 支持的模型系列（仅 antigravity 平台使用）
 	SupportedModelScopes []string
+	// 缓存读取转移
+	CacheReadTransferRatio       float64
+	CacheReadTransferProbability float64
 	// 从指定分组复制账号（创建分组后在同一事务内绑定）
 	CopyAccountsFromGroupIDs []int64
 }
@@ -153,6 +156,9 @@ type UpdateGroupInput struct {
 	MCPXMLInject        *bool
 	// 支持的模型系列（仅 antigravity 平台使用）
 	SupportedModelScopes *[]string
+	// 缓存读取转移
+	CacheReadTransferRatio       *float64
+	CacheReadTransferProbability *float64
 	// 从指定分组复制账号（同步操作：先清空当前分组的账号绑定，再绑定源分组的账号）
 	CopyAccountsFromGroupIDs []int64
 }
@@ -715,6 +721,8 @@ func (s *adminServiceImpl) CreateGroup(ctx context.Context, input *CreateGroupIn
 		ModelRouting:                    input.ModelRouting,
 		MCPXMLInject:                    mcpXMLInject,
 		SupportedModelScopes:            input.SupportedModelScopes,
+		CacheReadTransferRatio:          input.CacheReadTransferRatio,
+		CacheReadTransferProbability:    input.CacheReadTransferProbability,
 	}
 	if err := s.groupRepo.Create(ctx, group); err != nil {
 		return nil, err
@@ -911,6 +919,14 @@ func (s *adminServiceImpl) UpdateGroup(ctx context.Context, id int64, input *Upd
 	// 支持的模型系列（仅 antigravity 平台使用）
 	if input.SupportedModelScopes != nil {
 		group.SupportedModelScopes = *input.SupportedModelScopes
+	}
+
+	// 缓存读取转移
+	if input.CacheReadTransferRatio != nil {
+		group.CacheReadTransferRatio = *input.CacheReadTransferRatio
+	}
+	if input.CacheReadTransferProbability != nil {
+		group.CacheReadTransferProbability = *input.CacheReadTransferProbability
 	}
 
 	if err := s.groupRepo.Update(ctx, group); err != nil {

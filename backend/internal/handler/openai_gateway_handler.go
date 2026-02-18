@@ -339,6 +339,12 @@ func (h *OpenAIGatewayHandler) handleFailoverExhausted(c *gin.Context, failoverE
 	statusCode := failoverErr.StatusCode
 	responseBody := failoverErr.ResponseBody
 
+	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
+	if service.ContainsYesCaseInsensitive(responseBody) {
+		h.handleStreamingAwareError(c, http.StatusBadRequest, "invalid_request_error", "invalid request", streamStarted)
+		return
+	}
+
 	// 先检查透传规则
 	if h.errorPassthroughService != nil && len(responseBody) > 0 {
 		if rule := h.errorPassthroughService.MatchRule("openai", statusCode, responseBody); rule != nil {

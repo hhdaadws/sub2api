@@ -122,6 +122,16 @@ func (Group) Fields() []ent.Field {
 			SchemaType(map[string]string{dialect.Postgres: "jsonb"}).
 			Comment("支持的模型系列：claude, gemini_text, gemini_image"),
 
+		// 缓存读取转移 (added by migration 056)
+		field.Float("cache_read_transfer_ratio").
+			Default(0).
+			SchemaType(map[string]string{dialect.Postgres: "decimal(10,4)"}).
+			Comment("缓存读取转移倍率：0~1，将 cache_read 的该比例转移到 cache_creation"),
+		field.Float("cache_read_transfer_probability").
+			Default(0).
+			SchemaType(map[string]string{dialect.Postgres: "decimal(10,4)"}).
+			Comment("缓存读取转移触发概率：0~1"),
+
 		// 分组排序 (added by migration 052)
 		field.Int("sort_order").
 			Default(0).

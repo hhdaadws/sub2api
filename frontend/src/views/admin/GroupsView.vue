@@ -328,6 +328,36 @@
           />
           <p class="input-hint">{{ t('admin.groups.rateMultiplierHint') }}</p>
         </div>
+        <!-- 缓存读取转移 -->
+        <div class="col-span-2 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+          <h4 class="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('admin.groups.cacheReadTransfer.title') }}</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="input-label">{{ t('admin.groups.cacheReadTransfer.ratio') }}</label>
+              <input
+                v-model.number="createForm.cache_read_transfer_ratio"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                class="input"
+              />
+              <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.ratioHint') }}</p>
+            </div>
+            <div>
+              <label class="input-label">{{ t('admin.groups.cacheReadTransfer.probability') }}</label>
+              <input
+                v-model.number="createForm.cache_read_transfer_probability"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                class="input"
+              />
+              <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.probabilityHint') }}</p>
+            </div>
+          </div>
+        </div>
         <div v-if="createForm.subscription_type !== 'subscription'" data-tour="group-form-exclusive">
           <div class="mb-1.5 flex items-center gap-1">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -941,6 +971,36 @@
             class="input"
             data-tour="group-form-multiplier"
           />
+        </div>
+        <!-- 缓存读取转移 -->
+        <div class="col-span-2 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+          <h4 class="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('admin.groups.cacheReadTransfer.title') }}</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="input-label">{{ t('admin.groups.cacheReadTransfer.ratio') }}</label>
+              <input
+                v-model.number="editForm.cache_read_transfer_ratio"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                class="input"
+              />
+              <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.ratioHint') }}</p>
+            </div>
+            <div>
+              <label class="input-label">{{ t('admin.groups.cacheReadTransfer.probability') }}</label>
+              <input
+                v-model.number="editForm.cache_read_transfer_probability"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                class="input"
+              />
+              <p class="input-hint">{{ t('admin.groups.cacheReadTransfer.probabilityHint') }}</p>
+            </div>
+          </div>
         </div>
         <div v-if="editForm.subscription_type !== 'subscription'">
           <div class="mb-1.5 flex items-center gap-1">
@@ -1766,6 +1826,9 @@ const createForm = reactive({
   supported_model_scopes: ['claude', 'gemini_text', 'gemini_image'] as string[],
   // MCP XML 协议注入开关（仅 antigravity 平台）
   mcp_xml_inject: true,
+  // 缓存读取转移
+  cache_read_transfer_ratio: 0,
+  cache_read_transfer_probability: 0,
   // 从分组复制账号
   copy_accounts_from_group_ids: [] as number[]
 })
@@ -1964,6 +2027,9 @@ const editForm = reactive({
   supported_model_scopes: ['claude', 'gemini_text', 'gemini_image'] as string[],
   // MCP XML 协议注入开关（仅 antigravity 平台）
   mcp_xml_inject: true,
+  // 缓存读取转移
+  cache_read_transfer_ratio: 0,
+  cache_read_transfer_probability: 0,
   // 从分组复制账号
   copy_accounts_from_group_ids: [] as number[]
 })
@@ -2050,6 +2116,8 @@ const closeCreateModal = () => {
   createForm.fallback_group_id_on_invalid_request = null
   createForm.supported_model_scopes = ['claude', 'gemini_text', 'gemini_image']
   createForm.mcp_xml_inject = true
+  createForm.cache_read_transfer_ratio = 0
+  createForm.cache_read_transfer_probability = 0
   createForm.copy_accounts_from_group_ids = []
   createModelRoutingRules.value = []
 }
@@ -2104,6 +2172,8 @@ const handleEdit = async (group: AdminGroup) => {
   editForm.model_routing_enabled = group.model_routing_enabled || false
   editForm.supported_model_scopes = group.supported_model_scopes || ['claude', 'gemini_text', 'gemini_image']
   editForm.mcp_xml_inject = group.mcp_xml_inject ?? true
+  editForm.cache_read_transfer_ratio = group.cache_read_transfer_ratio || 0
+  editForm.cache_read_transfer_probability = group.cache_read_transfer_probability || 0
   editForm.copy_accounts_from_group_ids = [] // 复制账号字段每次编辑时重置为空
   // 加载模型路由规则（异步加载账号名称）
   editModelRoutingRules.value = await convertApiFormatToRoutingRules(group.model_routing)

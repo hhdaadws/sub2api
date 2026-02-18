@@ -32,4 +32,7 @@ const (
 	// SingleAccountRetry 标识当前请求处于单账号 503 退避重试模式。
 	// 在此模式下，Service 层的模型限流预检查将等待限流过期而非直接切换账号。
 	SingleAccountRetry Key = "ctx_single_account_retry"
+
+	// CacheReadTransferRatio 缓存读取转移倍率（按概率触发后写入 context）
+	CacheReadTransferRatio Key = "ctx_cache_read_transfer_ratio"
 )

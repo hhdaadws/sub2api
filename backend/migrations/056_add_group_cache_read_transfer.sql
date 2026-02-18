@@ -1,0 +1,2 @@
+ALTER TABLE groups ADD COLUMN IF NOT EXISTS cache_read_transfer_ratio DECIMAL(10,4) NOT NULL DEFAULT 0;
+ALTER TABLE groups ADD COLUMN IF NOT EXISTS cache_read_transfer_probability DECIMAL(10,4) NOT NULL DEFAULT 0;

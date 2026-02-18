@@ -7113,6 +7113,10 @@ type GroupMutation struct {
 	mcp_xml_inject                          *bool
 	supported_model_scopes                  *[]string
 	appendsupported_model_scopes            []string
+	cache_read_transfer_ratio               *float64
+	addcache_read_transfer_ratio            *float64
+	cache_read_transfer_probability         *float64
+	addcache_read_transfer_probability      *float64
 	sort_order                              *int
 	addsort_order                           *int
 	clearedFields                           map[string]struct{}
@@ -8467,6 +8471,118 @@ func (m *GroupMutation) ResetSupportedModelScopes() {
 	m.appendsupported_model_scopes = nil
 }
 
+// SetCacheReadTransferRatio sets the "cache_read_transfer_ratio" field.
+func (m *GroupMutation) SetCacheReadTransferRatio(f float64) {
+	m.cache_read_transfer_ratio = &f
+	m.addcache_read_transfer_ratio = nil
+}
+
+// CacheReadTransferRatio returns the value of the "cache_read_transfer_ratio" field in the mutation.
+func (m *GroupMutation) CacheReadTransferRatio() (r float64, exists bool) {
+	v := m.cache_read_transfer_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCacheReadTransferRatio returns the old "cache_read_transfer_ratio" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldCacheReadTransferRatio(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCacheReadTransferRatio is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCacheReadTransferRatio requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCacheReadTransferRatio: %w", err)
+	}
+	return oldValue.CacheReadTransferRatio, nil
+}
+
+// AddCacheReadTransferRatio adds f to the "cache_read_transfer_ratio" field.
+func (m *GroupMutation) AddCacheReadTransferRatio(f float64) {
+	if m.addcache_read_transfer_ratio != nil {
+		*m.addcache_read_transfer_ratio += f
+	} else {
+		m.addcache_read_transfer_ratio = &f
+	}
+}
+
+// AddedCacheReadTransferRatio returns the value that was added to the "cache_read_transfer_ratio" field in this mutation.
+func (m *GroupMutation) AddedCacheReadTransferRatio() (r float64, exists bool) {
+	v := m.addcache_read_transfer_ratio
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCacheReadTransferRatio resets all changes to the "cache_read_transfer_ratio" field.
+func (m *GroupMutation) ResetCacheReadTransferRatio() {
+	m.cache_read_transfer_ratio = nil
+	m.addcache_read_transfer_ratio = nil
+}
+
+// SetCacheReadTransferProbability sets the "cache_read_transfer_probability" field.
+func (m *GroupMutation) SetCacheReadTransferProbability(f float64) {
+	m.cache_read_transfer_probability = &f
+	m.addcache_read_transfer_probability = nil
+}
+
+// CacheReadTransferProbability returns the value of the "cache_read_transfer_probability" field in the mutation.
+func (m *GroupMutation) CacheReadTransferProbability() (r float64, exists bool) {
+	v := m.cache_read_transfer_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCacheReadTransferProbability returns the old "cache_read_transfer_probability" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldCacheReadTransferProbability(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCacheReadTransferProbability is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCacheReadTransferProbability requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCacheReadTransferProbability: %w", err)
+	}
+	return oldValue.CacheReadTransferProbability, nil
+}
+
+// AddCacheReadTransferProbability adds f to the "cache_read_transfer_probability" field.
+func (m *GroupMutation) AddCacheReadTransferProbability(f float64) {
+	if m.addcache_read_transfer_probability != nil {
+		*m.addcache_read_transfer_probability += f
+	} else {
+		m.addcache_read_transfer_probability = &f
+	}
+}
+
+// AddedCacheReadTransferProbability returns the value that was added to the "cache_read_transfer_probability" field in this mutation.
+func (m *GroupMutation) AddedCacheReadTransferProbability() (r float64, exists bool) {
+	v := m.addcache_read_transfer_probability
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCacheReadTransferProbability resets all changes to the "cache_read_transfer_probability" field.
+func (m *GroupMutation) ResetCacheReadTransferProbability() {
+	m.cache_read_transfer_probability = nil
+	m.addcache_read_transfer_probability = nil
+}
+
 // SetSortOrder sets the "sort_order" field.
 func (m *GroupMutation) SetSortOrder(i int) {
 	m.sort_order = &i
@@ -8881,7 +8997,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 27)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -8954,6 +9070,12 @@ func (m *GroupMutation) Fields() []string {
 	if m.supported_model_scopes != nil {
 		fields = append(fields, group.FieldSupportedModelScopes)
 	}
+	if m.cache_read_transfer_ratio != nil {
+		fields = append(fields, group.FieldCacheReadTransferRatio)
+	}
+	if m.cache_read_transfer_probability != nil {
+		fields = append(fields, group.FieldCacheReadTransferProbability)
+	}
 	if m.sort_order != nil {
 		fields = append(fields, group.FieldSortOrder)
 	}
@@ -9013,6 +9135,10 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.McpXMLInject()
 	case group.FieldSupportedModelScopes:
 		return m.SupportedModelScopes()
+	case group.FieldCacheReadTransferRatio:
+		return m.CacheReadTransferRatio()
+	case group.FieldCacheReadTransferProbability:
+		return m.CacheReadTransferProbability()
 	case group.FieldSortOrder:
 		return m.SortOrder()
 	}
@@ -9072,6 +9198,10 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMcpXMLInject(ctx)
 	case group.FieldSupportedModelScopes:
 		return m.OldSupportedModelScopes(ctx)
+	case group.FieldCacheReadTransferRatio:
+		return m.OldCacheReadTransferRatio(ctx)
+	case group.FieldCacheReadTransferProbability:
+		return m.OldCacheReadTransferProbability(ctx)
 	case group.FieldSortOrder:
 		return m.OldSortOrder(ctx)
 	}
@@ -9251,6 +9381,20 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSupportedModelScopes(v)
 		return nil
+	case group.FieldCacheReadTransferRatio:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCacheReadTransferRatio(v)
+		return nil
+	case group.FieldCacheReadTransferProbability:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCacheReadTransferProbability(v)
+		return nil
 	case group.FieldSortOrder:
 		v, ok := value.(int)
 		if !ok {
@@ -9296,6 +9440,12 @@ func (m *GroupMutation) AddedFields() []string {
 	if m.addfallback_group_id_on_invalid_request != nil {
 		fields = append(fields, group.FieldFallbackGroupIDOnInvalidRequest)
 	}
+	if m.addcache_read_transfer_ratio != nil {
+		fields = append(fields, group.FieldCacheReadTransferRatio)
+	}
+	if m.addcache_read_transfer_probability != nil {
+		fields = append(fields, group.FieldCacheReadTransferProbability)
+	}
 	if m.addsort_order != nil {
 		fields = append(fields, group.FieldSortOrder)
 	}
@@ -9327,6 +9477,10 @@ func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedFallbackGroupID()
 	case group.FieldFallbackGroupIDOnInvalidRequest:
 		return m.AddedFallbackGroupIDOnInvalidRequest()
+	case group.FieldCacheReadTransferRatio:
+		return m.AddedCacheReadTransferRatio()
+	case group.FieldCacheReadTransferProbability:
+		return m.AddedCacheReadTransferProbability()
 	case group.FieldSortOrder:
 		return m.AddedSortOrder()
 	}
@@ -9407,6 +9561,20 @@ func (m *GroupMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddFallbackGroupIDOnInvalidRequest(v)
+		return nil
+	case group.FieldCacheReadTransferRatio:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCacheReadTransferRatio(v)
+		return nil
+	case group.FieldCacheReadTransferProbability:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCacheReadTransferProbability(v)
 		return nil
 	case group.FieldSortOrder:
 		v, ok := value.(int)
@@ -9582,6 +9750,12 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldSupportedModelScopes:
 		m.ResetSupportedModelScopes()
+		return nil
+	case group.FieldCacheReadTransferRatio:
+		m.ResetCacheReadTransferRatio()
+		return nil
+	case group.FieldCacheReadTransferProbability:
+		m.ResetCacheReadTransferProbability()
 		return nil
 	case group.FieldSortOrder:
 		m.ResetSortOrder()

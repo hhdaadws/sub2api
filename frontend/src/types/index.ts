@@ -382,9 +382,11 @@ export interface AdminGroup extends Group {
 
   // 分组排序
   sort_order: number
-}
 
-export interface ApiKey {
+  // 缓存读取转移
+  cache_read_transfer_ratio: number
+  cache_read_transfer_probability: number
+}
   id: number
   user_id: number
   key: string
@@ -440,6 +442,9 @@ export interface CreateGroupRequest {
   fallback_group_id_on_invalid_request?: number | null
   mcp_xml_inject?: boolean
   supported_model_scopes?: string[]
+  // 缓存读取转移
+  cache_read_transfer_ratio?: number
+  cache_read_transfer_probability?: number
   // 从指定分组复制账号
   copy_accounts_from_group_ids?: number[]
 }
@@ -463,6 +468,8 @@ export interface UpdateGroupRequest {
   fallback_group_id_on_invalid_request?: number | null
   mcp_xml_inject?: boolean
   supported_model_scopes?: string[]
+  cache_read_transfer_ratio?: number
+  cache_read_transfer_probability?: number
   copy_accounts_from_group_ids?: number[]
 }
 

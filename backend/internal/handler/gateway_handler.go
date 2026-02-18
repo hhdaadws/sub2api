@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	mathrand "math/rand/v2"
 	"net/http"
 	"strings"
 	"time"
@@ -151,6 +152,13 @@ func (h *GatewayHandler) Messages(c *gin.Context) {
 	// 绑定错误透传服务，允许 service 层在非 failover 错误场景复用规则。
 	if h.errorPassthroughService != nil {
 		service.BindErrorPassthroughService(c, h.errorPassthroughService)
+	}
+
+	// 缓存读取转移：按概率触发，将转移比例写入 context
+	if apiKey.Group != nil && apiKey.Group.CacheReadTransferRatio > 0 && apiKey.Group.CacheReadTransferProbability > 0 {
+		if mathrand.Float64() < apiKey.Group.CacheReadTransferProbability {
+			c.Set(string(ctxkey.CacheReadTransferRatio), apiKey.Group.CacheReadTransferRatio)
+		}
 	}
 
 	// 获取订阅信息（可能为nil）- 提前获取用于后续检查
@@ -955,6 +963,12 @@ func sleepAntigravitySingleAccountBackoff(ctx context.Context, retryCount int) b
 func (h *GatewayHandler) handleFailoverExhausted(c *gin.Context, failoverErr *service.UpstreamFailoverError, platform string, streamStarted bool) {
 	statusCode := failoverErr.StatusCode
 	responseBody := failoverErr.ResponseBody
+
+	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
+	if service.ContainsYesCaseInsensitive(responseBody) {
+		h.handleStreamingAwareError(c, http.StatusBadRequest, "invalid_request_error", "invalid request", streamStarted)
+		return
+	}
 
 	// 先检查透传规则
 	if h.errorPassthroughService != nil && len(responseBody) > 0 {

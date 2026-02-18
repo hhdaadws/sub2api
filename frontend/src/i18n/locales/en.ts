@@ -1188,6 +1188,13 @@ export default {
         geminiText: 'Gemini Text',
         geminiImage: 'Gemini Image',
         hint: 'Select at least one model family'
+      },
+      cacheReadTransfer: {
+        title: 'Cache Read Transfer',
+        ratio: 'Transfer Ratio',
+        ratioHint: '0-1, transfer this ratio of cache_read tokens to cache_creation billing',
+        probability: 'Trigger Probability',
+        probabilityHint: '0-1, probability of triggering transfer per request'
       }
     },
 
