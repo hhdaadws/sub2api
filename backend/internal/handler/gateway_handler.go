@@ -978,6 +978,7 @@ func (h *GatewayHandler) handleFailoverExhausted(c *gin.Context, failoverErr *se
 
 	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
 	if service.ContainsYesCaseInsensitive(responseBody) {
+		log.Printf("[ErrorOverride] Failover exhausted: upstream error %d overridden to 400 invalid_request (body contains 'yes'), platform=%s", statusCode, platform)
 		h.handleStreamingAwareError(c, http.StatusBadRequest, "invalid_request_error", "invalid request", streamStarted)
 		return
 	}

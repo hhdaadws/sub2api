@@ -3925,6 +3925,7 @@ func (s *GatewayService) handleErrorResponse(ctx context.Context, resp *http.Res
 
 	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
 	if ContainsYesCaseInsensitive(body) {
+		log.Printf("[ErrorOverride] Upstream error %d overridden to 400 invalid_request (body contains 'yes'), account=%d", resp.StatusCode, account.ID)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"type": "error",
 			"error": gin.H{
@@ -4096,6 +4097,7 @@ func (s *GatewayService) handleRetryExhaustedError(ctx context.Context, resp *ht
 
 	// 上游错误信息覆写：如果响应体包含 "yes"，返回 invalid request
 	if ContainsYesCaseInsensitive(respBody) {
+		log.Printf("[ErrorOverride] Upstream error %d (retries exhausted) overridden to 400 invalid_request (body contains 'yes'), account=%d", resp.StatusCode, account.ID)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"type": "error",
 			"error": gin.H{
