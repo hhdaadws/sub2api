@@ -147,6 +147,8 @@ func (r *apiKeyRepository) GetByKeyForAuth(ctx context.Context, key string) (*se
 				group.FieldModelRouting,
 				group.FieldMcpXMLInject,
 				group.FieldSupportedModelScopes,
+				group.FieldCacheReadTransferRatio,
+				group.FieldCacheReadTransferProbability,
 			)
 		}).
 		Only(ctx)

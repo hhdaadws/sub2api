@@ -56,6 +56,10 @@ type APIKeyAuthGroupSnapshot struct {
 
 	// 支持的模型系列（仅 antigravity 平台使用）
 	SupportedModelScopes []string `json:"supported_model_scopes,omitempty"`
+
+	// 缓存读取转移
+	CacheReadTransferRatio       float64 `json:"cache_read_transfer_ratio,omitempty"`
+	CacheReadTransferProbability float64 `json:"cache_read_transfer_probability,omitempty"`
 }
 
 // APIKeyAuthCacheEntry 缓存条目，支持负缓存
