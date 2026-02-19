@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"log/slog"
+	"math"
 	mathrand "math/rand"
 	"net/http"
 	"os"
@@ -4431,17 +4432,17 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 						if _, werr := fmt.Fprint(w, block); werr != nil {
 							clientDisconnected = true
 							log.Printf("Client disconnected during streaming, continuing to drain upstream for billing")
-							break
+						} else {
+							flusher.Flush()
 						}
-						flusher.Flush()
 					}
-					if data != "" {
-						if firstTokenMs == nil && data != "[DONE]" {
-							ms := int(time.Since(startTime).Milliseconds())
-							firstTokenMs = &ms
-						}
-						s.parseSSEUsage(data, usage)
+				}
+				if data != "" {
+					if firstTokenMs == nil && data != "[DONE]" {
+						ms := int(time.Since(startTime).Milliseconds())
+						firstTokenMs = &ms
 					}
+					s.parseSSEUsage(data, usage)
 				}
 				continue
 			}
@@ -4561,13 +4562,13 @@ func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
 	if cacheRead <= 0 {
 		return false
 	}
-	transferAmount := cacheRead * ratio
+	transferAmount := math.Round(cacheRead * ratio)
 	if transferAmount <= 0 {
 		return false
 	}
-	usageObj["cache_read_input_tokens"] = cacheRead - transferAmount
+	usageObj["cache_read_input_tokens"] = int(cacheRead) - int(transferAmount)
 	cacheCreation, _ := usageObj["cache_creation_input_tokens"].(float64)
-	usageObj["cache_creation_input_tokens"] = cacheCreation + transferAmount
+	usageObj["cache_creation_input_tokens"] = int(cacheCreation) + int(transferAmount)
 
 	// 同步更新嵌套的 cache_creation.ephemeral_1h_input_tokens
 	cc, _ := usageObj["cache_creation"].(map[string]any)
@@ -4584,7 +4585,7 @@ func rewriteCacheReadTransferJSON(usageObj map[string]any, ratio float64) bool {
 			cc1h = cacheCreation
 		}
 	}
-	cc["ephemeral_1h_input_tokens"] = cc1h + transferAmount
+	cc["ephemeral_1h_input_tokens"] = int(cc1h) + int(transferAmount)
 	return true
 }
 
@@ -4777,6 +4778,13 @@ func (s *GatewayService) RecordUsage(ctx context.Context, input *RecordUsageInpu
 	user := input.User
 	account := input.Account
 	subscription := input.Subscription
+
+	// 跳过全零使用量记录（通常由客户端在收到任何数据前断开连接导致，无实际计费意义）
+	if result.Usage.InputTokens == 0 && result.Usage.OutputTokens == 0 &&
+		result.Usage.CacheReadInputTokens == 0 && result.Usage.CacheCreationInputTokens == 0 &&
+		result.ImageCount == 0 {
+		return nil
+	}
 
 	// 强制缓存计费：将 input_tokens 转为 cache_read_input_tokens
 	// 用于粘性会话切换时的特殊计费处理
