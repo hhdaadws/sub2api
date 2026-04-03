@@ -4182,6 +4182,16 @@ func (s *GatewayService) Forward(ctx context.Context, c *gin.Context, account *A
 		body, reqModel = normalizeClaudeOAuthRequestBody(body, reqModel, normalizeOpts)
 	}
 
+	// Privacy: rewrite system prompt and message system-reminders
+	if privacyCfg := &s.cfg.Privacy; privacyCfg.Enabled {
+		if next, changed := PrivacyRewriteSystemBody(body, privacyCfg); changed {
+			body = next
+		}
+		if next, changed := PrivacyRewriteMessages(body, privacyCfg); changed {
+			body = next
+		}
+	}
+
 	// 强制执行 cache_control 块数量限制（最多 4 个）
 	body = enforceCacheControlLimit(body)
 
@@ -4963,6 +4973,8 @@ func (s *GatewayService) buildUpstreamRequestAnthropicAPIKeyPassthrough(
 	req.Header.Del("x-api-key")
 	req.Header.Del("x-goog-api-key")
 	req.Header.Del("cookie")
+	// Privacy: strip billing header before forwarding
+	PrivacyStripBillingHeader(req.Header, &s.cfg.Privacy)
 	setHeaderRaw(req.Header, "x-api-key", token)
 
 	if getHeaderRaw(req.Header, "content-type") == "" {
@@ -8103,6 +8115,16 @@ func (s *GatewayService) ForwardCountTokens(ctx context.Context, c *gin.Context,
 		body, reqModel = normalizeClaudeOAuthRequestBody(body, reqModel, normalizeOpts)
 	}
 
+	// Privacy: rewrite system prompt and message system-reminders (count_tokens path)
+	if privacyCfg := &s.cfg.Privacy; privacyCfg.Enabled {
+		if next, changed := PrivacyRewriteSystemBody(body, privacyCfg); changed {
+			body = next
+		}
+		if next, changed := PrivacyRewriteMessages(body, privacyCfg); changed {
+			body = next
+		}
+	}
+
 	// Antigravity 账户不支持 count_tokens，返回 404 让客户端 fallback 到本地估算。
 	// 返回 nil 避免 handler 层记录为错误，也不设置 ops 上游错误上下文。
 	if account.Platform == PlatformAntigravity {
@@ -8409,6 +8431,8 @@ func (s *GatewayService) buildCountTokensRequestAnthropicAPIKeyPassthrough(
 	req.Header.Del("x-api-key")
 	req.Header.Del("x-goog-api-key")
 	req.Header.Del("cookie")
+	// Privacy: strip billing header before forwarding (count_tokens path)
+	PrivacyStripBillingHeader(req.Header, &s.cfg.Privacy)
 	req.Header.Set("x-api-key", token)
 
 	if req.Header.Get("content-type") == "" {
