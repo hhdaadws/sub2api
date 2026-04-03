@@ -83,6 +83,43 @@ type Config struct {
 	Gemini                  GeminiConfig                  `mapstructure:"gemini"`
 	Update                  UpdateConfig                  `mapstructure:"update"`
 	Idempotency             IdempotencyConfig             `mapstructure:"idempotency"`
+	Privacy                 PrivacyConfig                 `mapstructure:"privacy"`
+}
+
+// PrivacyConfig controls fingerprint normalization and telemetry rewriting.
+// When enabled, system prompts, telemetry payloads and request headers are
+// rewritten to canonical values to prevent upstream identity correlation.
+type PrivacyConfig struct {
+	Enabled bool `mapstructure:"enabled"` // master switch (default: true)
+
+	// System prompt environment block canonical values
+	Platform   string `mapstructure:"platform"`    // e.g. "darwin"
+	Shell      string `mapstructure:"shell"`       // e.g. "zsh"
+	OSVersion  string `mapstructure:"os_version"`  // e.g. "Darwin 24.4.0"
+	WorkingDir string `mapstructure:"working_dir"` // e.g. "/Users/user/projects/myapp"
+	HomeDir    string `mapstructure:"home_dir"`    // e.g. "/Users/user/"
+
+	// Telemetry identity
+	Email string `mapstructure:"email"` // canonical email for event_logging
+
+	// Telemetry environment fingerprint
+	NodeVersion string `mapstructure:"node_version"` // e.g. "v22.13.0"
+	Terminal    string `mapstructure:"terminal"`      // e.g. "Apple_Terminal"
+	Arch        string `mapstructure:"arch"`          // e.g. "arm64"
+	CLIVersion  string `mapstructure:"cli_version"`   // e.g. "2.1.22"
+
+	// Process metrics randomization ranges (bytes)
+	ConstrainedMemory int64 `mapstructure:"constrained_memory"` // fixed canonical value
+	RSSMin            int64 `mapstructure:"rss_min"`
+	RSSMax            int64 `mapstructure:"rss_max"`
+	HeapTotalMin      int64 `mapstructure:"heap_total_min"`
+	HeapTotalMax      int64 `mapstructure:"heap_total_max"`
+	HeapUsedMin       int64 `mapstructure:"heap_used_min"`
+	HeapUsedMax       int64 `mapstructure:"heap_used_max"`
+
+	// Billing header handling
+	StripBillingHeader bool `mapstructure:"strip_billing_header"` // strip x-anthropic-billing-header
+	RecomputeCCH       bool `mapstructure:"recompute_cch"`        // recompute CCH billing hash
 }
 
 type LogConfig struct {
@@ -1517,6 +1554,27 @@ func setDefaults() {
 	viper.SetDefault("subscription_maintenance.worker_count", 2)
 	viper.SetDefault("subscription_maintenance.queue_size", 1024)
 
+	// Privacy / fingerprint normalization
+	viper.SetDefault("privacy.enabled", true)
+	viper.SetDefault("privacy.platform", "darwin")
+	viper.SetDefault("privacy.shell", "zsh")
+	viper.SetDefault("privacy.os_version", "Darwin 24.4.0")
+	viper.SetDefault("privacy.working_dir", "/Users/user/projects/myapp")
+	viper.SetDefault("privacy.home_dir", "/Users/user/")
+	viper.SetDefault("privacy.email", "user@example.com")
+	viper.SetDefault("privacy.node_version", "v22.13.0")
+	viper.SetDefault("privacy.terminal", "Apple_Terminal")
+	viper.SetDefault("privacy.arch", "arm64")
+	viper.SetDefault("privacy.cli_version", "2.1.22")
+	viper.SetDefault("privacy.constrained_memory", int64(17179869184)) // 16GB
+	viper.SetDefault("privacy.rss_min", int64(100*1024*1024))          // 100MB
+	viper.SetDefault("privacy.rss_max", int64(500*1024*1024))          // 500MB
+	viper.SetDefault("privacy.heap_total_min", int64(50*1024*1024))    // 50MB
+	viper.SetDefault("privacy.heap_total_max", int64(200*1024*1024))   // 200MB
+	viper.SetDefault("privacy.heap_used_min", int64(20*1024*1024))     // 20MB
+	viper.SetDefault("privacy.heap_used_max", int64(100*1024*1024))    // 100MB
+	viper.SetDefault("privacy.strip_billing_header", true)
+	viper.SetDefault("privacy.recompute_cch", true)
 }
 
 func (c *Config) Validate() error {
