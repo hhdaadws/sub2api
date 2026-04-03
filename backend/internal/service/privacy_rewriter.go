@@ -15,6 +15,8 @@ import (
 	"github.com/tidwall/sjson"
 )
 
+const billingHeaderName = "x-anthropic-billing-header"
+
 // ── CCH hash algorithm (reverse-engineered from Claude Code CLI) ──
 
 const cchSalt = "59cf53e54c78"
@@ -79,7 +81,7 @@ var (
 	homeDirRegex    = regexp.MustCompile(`/(?:Users|home)/[^/\s]+/`)
 	ccVersionRegex  = regexp.MustCompile(`cc_version=[\d.]+\.[a-f0-9]{3}`)
 	sysReminderRe   = regexp.MustCompile(`(<system-reminder>)([\s\S]*?)(</system-reminder>)`)
-	billingBlockRe  = regexp.MustCompile(`(?m)^\s*x-anthropic-billing-header:[^\n]*\n?`)
+	billingBlockRe  = regexp.MustCompile(`(?m)^\s*` + billingHeaderName + `:[^\n]*\n?`)
 )
 
 // rewritePromptText rewrites environment fields and billing hash inside a
@@ -113,6 +115,9 @@ func rewritePromptText(text string, cfg *config.PrivacyConfig, cchHash string) s
 // and are not user-authored content. cchHash rewriting is skipped inside
 // message-level system-reminders (hash is applied in system prompt only).
 func rewriteSystemReminders(text string, cfg *config.PrivacyConfig) string {
+	if !strings.Contains(text, "<system-reminder>") {
+		return text
+	}
 	return sysReminderRe.ReplaceAllStringFunc(text, func(match string) string {
 		parts := sysReminderRe.FindStringSubmatch(match)
 		if len(parts) != 4 {
@@ -123,6 +128,22 @@ func rewriteSystemReminders(text string, cfg *config.PrivacyConfig) string {
 }
 
 // ── Public API ──
+
+// PrivacyRewriteRequestBody applies all privacy rewrites to a request body:
+// system prompt rewriting, billing header stripping, and message system-reminder
+// normalization. Returns the (possibly modified) body.
+func PrivacyRewriteRequestBody(body []byte, cfg *config.PrivacyConfig) []byte {
+	if cfg == nil || !cfg.Enabled {
+		return body
+	}
+	if next, changed := PrivacyRewriteSystemBody(body, cfg); changed {
+		body = next
+	}
+	if next, changed := PrivacyRewriteMessages(body, cfg); changed {
+		body = next
+	}
+	return body
+}
 
 // PrivacyRewriteSystemBody rewrites system prompt blocks for privacy:
 //   - Strips billing header blocks (x-anthropic-billing-header text blocks)
@@ -180,7 +201,7 @@ func PrivacyRewriteSystemBody(body []byte, cfg *config.PrivacyConfig) ([]byte, b
 					text = item.Get("text").String()
 				}
 				if strings.TrimSpace(text) != "" && billingBlockRe.MatchString(text) &&
-					strings.HasPrefix(strings.TrimSpace(text), "x-anthropic-billing-header") {
+					strings.HasPrefix(strings.TrimSpace(text), billingHeaderName) {
 					toRemove = append(toRemove, index)
 					index++
 					return true
@@ -282,7 +303,7 @@ func PrivacyStripBillingHeader(header map[string][]string, cfg *config.PrivacyCo
 		return
 	}
 	for k := range header {
-		if strings.EqualFold(k, "x-anthropic-billing-header") {
+		if strings.EqualFold(k, billingHeaderName) {
 			delete(header, k)
 		}
 	}
