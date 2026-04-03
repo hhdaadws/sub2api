@@ -4183,14 +4183,7 @@ func (s *GatewayService) Forward(ctx context.Context, c *gin.Context, account *A
 	}
 
 	// Privacy: rewrite system prompt and message system-reminders
-	if privacyCfg := &s.cfg.Privacy; privacyCfg.Enabled {
-		if next, changed := PrivacyRewriteSystemBody(body, privacyCfg); changed {
-			body = next
-		}
-		if next, changed := PrivacyRewriteMessages(body, privacyCfg); changed {
-			body = next
-		}
-	}
+	body = PrivacyRewriteRequestBody(body, &s.cfg.Privacy)
 
 	// 强制执行 cache_control 块数量限制（最多 4 个）
 	body = enforceCacheControlLimit(body)
@@ -8116,14 +8109,7 @@ func (s *GatewayService) ForwardCountTokens(ctx context.Context, c *gin.Context,
 	}
 
 	// Privacy: rewrite system prompt and message system-reminders (count_tokens path)
-	if privacyCfg := &s.cfg.Privacy; privacyCfg.Enabled {
-		if next, changed := PrivacyRewriteSystemBody(body, privacyCfg); changed {
-			body = next
-		}
-		if next, changed := PrivacyRewriteMessages(body, privacyCfg); changed {
-			body = next
-		}
-	}
+	body = PrivacyRewriteRequestBody(body, &s.cfg.Privacy)
 
 	// Antigravity 账户不支持 count_tokens，返回 404 让客户端 fallback 到本地估算。
 	// 返回 nil 避免 handler 层记录为错误，也不设置 ops 上游错误上下文。
